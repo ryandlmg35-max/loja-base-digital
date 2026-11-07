@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
+import { handleImageError } from "@/components/site/image";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SITE, getVendor } from "@/data/catalog";
 
@@ -44,7 +45,7 @@ function VendorPage() {
         <div className="row-fluid">
           <div className="span12">
             <h2>{vendor.name}</h2>
-            <img src={vendor.image} alt={vendor.name} />
+            <img src={vendor.image} alt={vendor.name} onError={handleImageError} />
           </div>
           <table>
             <tbody>

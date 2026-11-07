@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
+import { handleImageError } from "@/components/site/image";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SITE, getProduct } from "@/data/catalog";
 import { useCatalog } from "@/lib/catalog-db";
@@ -64,7 +65,12 @@ function ProductPage() {
                 <div id="myCarousel" className="carousel slide cntr">
                   <div className="carousel-inner">
                     <div className="item active">
-                      <img src={product.image} alt={product.name} style={{ width: "100%" }} />
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        style={{ width: "100%" }}
+                        onError={handleImageError}
+                      />
                     </div>
                   </div>
                 </div>

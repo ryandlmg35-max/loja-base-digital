@@ -1,6 +1,7 @@
 ﻿import { Link } from "@tanstack/react-router";
 import type { Product } from "@/data/catalog";
 import { NO_AUTO_ACTIVE_CLASS } from "./link";
+import { handleImageError } from "./image";
 
 function chunk<T>(items: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -27,7 +28,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                   to="/product/$id"
                   params={{ id: String(product.id) }}
                 >
-                  <img src={product.image} alt={product.name} />
+                  <img src={product.image} alt={product.name} onError={handleImageError} />
                 </Link>
                 <div className="caption cntr">
                   <Link

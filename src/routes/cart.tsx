@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
+import { handleImageError } from "@/components/site/image";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SITE } from "@/data/catalog";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,6 +110,7 @@ function CartPage() {
                           src={line.product.image}
                           alt={line.product.name}
                           style={{ maxHeight: 60 }}
+                          onError={handleImageError}
                         />
                       </Link>
                     </td>
