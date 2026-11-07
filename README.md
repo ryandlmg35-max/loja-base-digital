@@ -48,13 +48,16 @@ em `scripts/`:
 
 ```sh
 # 1. baixa as páginas e os assets pelo Tor (SOCKS5 127.0.0.1:9150)
-powershell -File C:\Users\ryan\steroid-clone\fetch.ps1
-powershell -File C:\Users\ryan\steroid-clone\fetch-assets.ps1
-powershell -File C:\Users\ryan\steroid-clone\fetch-extra.ps1
+powershell -File scripts/fetch-pages.ps1
+powershell -File scripts/fetch-assets.ps1
+powershell -File scripts/fetch-extra.ps1
 
 # 2. regenera src/data/catalog.ts, src/data/footer-seo.ts e seed/catalogo.sql
 node scripts/extract-catalog.mjs
 ```
+
+O `extract-catalog.mjs` lê o dump de `C:\Users\ryan\steroid-clone\dump` por padrão; aponte outro
+caminho com `ONION_DUMP=... node scripts/extract-catalog.mjs`.
 
 ### Scripts
 

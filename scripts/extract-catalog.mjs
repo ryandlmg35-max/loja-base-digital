@@ -3,9 +3,9 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 import { join } from "node:path";
 import { format, resolveConfig } from "prettier";
 
-const DUMP = "C:\\Users\\ryan\\steroid-clone\\dump";
+const REPO = join(import.meta.dirname, "..");
+const DUMP = process.env["ONION_DUMP"] ?? join(REPO, "..", "steroid-clone", "dump");
 const PAGES = join(DUMP, "pages");
-const REPO = "C:\\Users\\ryan\\loja-base-digital";
 const OUT_DIR = join(REPO, "src", "data");
 mkdirSync(OUT_DIR, { recursive: true });
 
