@@ -10,11 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as ToplistRouteImport } from './routes/toplist'
+import { Route as ApiRegisterRouteImport } from './routes/api/register'
+import { Route as ApiSyncCatalogRouteImport } from './routes/api/sync-catalog'
 import { Route as CatIdRouteImport } from './routes/cat.$id'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as VendorIdRouteImport } from './routes/vendor.$id'
@@ -22,6 +25,11 @@ import { Route as VendorIdRouteImport } from './routes/vendor.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CartRoute = CartRouteImport.update({
@@ -49,6 +57,16 @@ const ToplistRoute = ToplistRouteImport.update({
   path: '/toplist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRegisterRoute = ApiRegisterRouteImport.update({
+  id: '/api/register',
+  path: '/api/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSyncCatalogRoute = ApiSyncCatalogRouteImport.update({
+  id: '/api/sync-catalog',
+  path: '/api/sync-catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CatIdRoute = CatIdRouteImport.update({
   id: '/cat/$id',
   path: '/cat/$id',
@@ -67,22 +85,28 @@ const VendorIdRoute = VendorIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/cart': typeof CartRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/support': typeof SupportRoute
   '/toplist': typeof ToplistRoute
+  '/api/register': typeof ApiRegisterRoute
+  '/api/sync-catalog': typeof ApiSyncCatalogRoute
   '/cat/$id': typeof CatIdRoute
   '/product/$id': typeof ProductIdRoute
   '/vendor/$id': typeof VendorIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/cart': typeof CartRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/support': typeof SupportRoute
   '/toplist': typeof ToplistRoute
+  '/api/register': typeof ApiRegisterRoute
+  '/api/sync-catalog': typeof ApiSyncCatalogRoute
   '/cat/$id': typeof CatIdRoute
   '/product/$id': typeof ProductIdRoute
   '/vendor/$id': typeof VendorIdRoute
@@ -90,11 +114,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/cart': typeof CartRoute
   '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
   '/support': typeof SupportRoute
   '/toplist': typeof ToplistRoute
+  '/api/register': typeof ApiRegisterRoute
+  '/api/sync-catalog': typeof ApiSyncCatalogRoute
   '/cat/$id': typeof CatIdRoute
   '/product/$id': typeof ProductIdRoute
   '/vendor/$id': typeof VendorIdRoute
@@ -103,33 +130,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/cart'
     | '/faq'
     | '/login'
     | '/support'
     | '/toplist'
+    | '/api/register'
+    | '/api/sync-catalog'
     | '/cat/$id'
     | '/product/$id'
     | '/vendor/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/cart'
     | '/faq'
     | '/login'
     | '/support'
     | '/toplist'
+    | '/api/register'
+    | '/api/sync-catalog'
     | '/cat/$id'
     | '/product/$id'
     | '/vendor/$id'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/cart'
     | '/faq'
     | '/login'
     | '/support'
     | '/toplist'
+    | '/api/register'
+    | '/api/sync-catalog'
     | '/cat/$id'
     | '/product/$id'
     | '/vendor/$id'
@@ -137,11 +173,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   CartRoute: typeof CartRoute
   FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
   SupportRoute: typeof SupportRoute
   ToplistRoute: typeof ToplistRoute
+  ApiRegisterRoute: typeof ApiRegisterRoute
+  ApiSyncCatalogRoute: typeof ApiSyncCatalogRoute
   CatIdRoute: typeof CatIdRoute
   ProductIdRoute: typeof ProductIdRoute
   VendorIdRoute: typeof VendorIdRoute
@@ -154,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cart': {
@@ -191,6 +237,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToplistRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/register': {
+      id: '/api/register'
+      path: '/api/register'
+      fullPath: '/api/register'
+      preLoaderRoute: typeof ApiRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync-catalog': {
+      id: '/api/sync-catalog'
+      path: '/api/sync-catalog'
+      fullPath: '/api/sync-catalog'
+      preLoaderRoute: typeof ApiSyncCatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cat/$id': {
       id: '/cat/$id'
       path: '/cat/$id'
@@ -217,11 +277,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   CartRoute: CartRoute,
   FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
   SupportRoute: SupportRoute,
   ToplistRoute: ToplistRoute,
+  ApiRegisterRoute: ApiRegisterRoute,
+  ApiSyncCatalogRoute: ApiSyncCatalogRoute,
   CatIdRoute: CatIdRoute,
   ProductIdRoute: ProductIdRoute,
   VendorIdRoute: VendorIdRoute,

@@ -7,13 +7,23 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getProduct, type Product } from "@/data/catalog";
+import { getProduct, SITE, type Product } from "@/data/catalog";
 
 export type CartLine = {
   product: Product;
   qty: number;
   lineTotal: number;
 };
+
+/**
+ * Shipping rules of the original storefront: flat $5.00 shipping, free from $200.00.
+ * An empty cart carries no shipping and no total.
+ */
+export function cartTotals(subtotal: number): { shippingCost: number; total: number } {
+  if (subtotal <= 0) return { shippingCost: 0, total: 0 };
+  const shippingCost = subtotal >= SITE.freeShippingFrom ? 0 : SITE.shippingCost;
+  return { shippingCost, total: subtotal + shippingCost };
+}
 
 type CartState = Record<string, number>;
 

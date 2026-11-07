@@ -24,7 +24,8 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-  const [notice, setNotice] = useState<Notice>(null);
+  const [registerNotice, setRegisterNotice] = useState<Notice>(null);
+  const [loginNotice, setLoginNotice] = useState<Notice>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -37,18 +38,58 @@ function LoginPage() {
 
   const register = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setNotice(null);
+    setRegisterNotice(null);
 
     if (password !== password2) {
-      setNotice({ kind: "error", text: "Passwords do not match." });
+      setRegisterNotice({ kind: "error", text: "Passwords do not match." });
       return;
     }
     if (password.length < 6) {
-      setNotice({ kind: "error", text: "Password must have at least 6 characters." });
+      setRegisterNotice({ kind: "error", text: "Password must have at least 6 characters." });
       return;
     }
 
     setBusy(true);
+
+    // The server route creates the account with the email already confirmed when the
+    // runtime has the service-role key (Lovable Cloud). Locally it answers 503 and the
+    // regular sign-up flow below takes over.
+    let accountReady = false;
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, password, nome: username }),
+      });
+      if (response.ok) {
+        const payload = (await response.json()) as { ok?: boolean };
+        accountReady = Boolean(payload.ok);
+      } else {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        if (payload?.error === "email_taken") {
+          setBusy(false);
+          setRegisterNotice({
+            kind: "error",
+            text: "This email is already registered. Try to login.",
+          });
+          return;
+        }
+      }
+    } catch {
+      accountReady = false;
+    }
+
+    if (accountReady) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      setBusy(false);
+      if (error) {
+        setRegisterNotice({ kind: "error", text: error.message });
+        return;
+      }
+      setRegisterNotice({ kind: "ok", text: "Account created. You are logged in." });
+      return;
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -57,31 +98,47 @@ function LoginPage() {
     setBusy(false);
 
     if (error) {
-      setNotice({ kind: "error", text: error.message });
+      setRegisterNotice({ kind: "error", text: error.message });
       return;
     }
-    setNotice(
+    setRegisterNotice(
       data.session
         ? { kind: "ok", text: "Account created. You are logged in." }
-        : { kind: "ok", text: "Account created. Confirm your email to log in." },
+        : {
+            kind: "ok",
+            text: "Account created. Confirm your email to log in — you can resend the confirmation email from the login form.",
+          },
     );
   };
 
   const login = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setNotice(null);
+    setLoginNotice(null);
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) setNotice({ kind: "error", text: error.message });
+    if (error) setLoginNotice({ kind: "error", text: error.message });
+  };
+
+  const resendConfirmation = async () => {
+    setLoginNotice(null);
+    const { error } = await supabase.auth.resend({ type: "signup", email });
+    if (error) {
+      setLoginNotice({ kind: "error", text: error.message });
+      return;
+    }
+    setLoginNotice({ kind: "ok", text: "Confirmation email sent again. Check your inbox." });
   };
 
   const logout = async () => {
     setBusy(true);
     await supabase.auth.signOut();
     setBusy(false);
-    setNotice({ kind: "ok", text: "You are logged out." });
+    setRegisterNotice({ kind: "ok", text: "You are logged out." });
   };
+
+  const needsConfirmation =
+    loginNotice?.kind === "error" && /not confirmed/i.test(loginNotice.text);
 
   return (
     <SiteLayout>
@@ -183,6 +240,15 @@ function LoginPage() {
                       </button>
                     </div>
                   </div>
+                  {registerNotice ? (
+                    <div
+                      className={
+                        registerNotice.kind === "ok" ? "alert alert-success" : "alert alert-error"
+                      }
+                    >
+                      {registerNotice.text}
+                    </div>
+                  ) : null}
                 </form>
               )}
             </div>
@@ -229,14 +295,29 @@ function LoginPage() {
                     <button type="submit" className="exclusive shopBtn" disabled={busy}>
                       Login
                     </button>
+                    {needsConfirmation ? (
+                      <button
+                        type="button"
+                        className="defaultBtn"
+                        style={{ marginLeft: 8 }}
+                        onClick={() => void resendConfirmation()}
+                        disabled={busy}
+                      >
+                        Resend confirmation
+                      </button>
+                    ) : null}
                   </div>
                 </div>
+                {loginNotice ? (
+                  <div
+                    className={
+                      loginNotice.kind === "ok" ? "alert alert-success" : "alert alert-error"
+                    }
+                  >
+                    {loginNotice.text}
+                  </div>
+                ) : null}
               </form>
-              {notice ? (
-                <div className={notice.kind === "ok" ? "alert alert-success" : "alert alert-error"}>
-                  {notice.text}
-                </div>
-              ) : null}
             </div>
           </div>
         </div>

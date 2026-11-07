@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
 import { handleImageError } from "@/components/site/image";
+import { PaymentPanel, type PlacedOrder } from "@/components/site/PaymentPanel";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SITE } from "@/data/catalog";
 import { supabase } from "@/integrations/supabase/client";
-import { useCart } from "@/lib/cart";
+import { cartTotals, useCart } from "@/lib/cart";
 import { createOrder } from "@/lib/orders";
 
 export const Route = createFileRoute("/cart")({
@@ -25,6 +26,7 @@ const usd = (value: number) => `$ ${value.toFixed(2)}`;
 function CartPage() {
   const { lines, subtotal, count, setQty, remove, clear, hydrated } = useCart();
   const [user, setUser] = useState<User | null>(null);
+  const [order, setOrder] = useState<PlacedOrder | null>(null);
   const [shipping, setShipping] = useState({
     name: "",
     address: "",
@@ -45,14 +47,14 @@ function CartPage() {
     return () => subscription.subscription.unsubscribe();
   }, []);
 
-  const shippingCost = subtotal >= SITE.freeShippingFrom || subtotal === 0 ? 0 : SITE.shippingCost;
-  const total = subtotal + shippingCost;
+  const { shippingCost, total } = cartTotals(subtotal);
 
   const placeOrder = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setNotice(null);
     setBusy(true);
-    const result = await createOrder(lines, total);
+    const snapshot = lines;
+    const result = await createOrder(snapshot, total);
     setBusy(false);
 
     if (!result.ok) {
@@ -60,11 +62,27 @@ function CartPage() {
       return;
     }
 
+    setOrder({
+      id: result.orderId,
+      total,
+      createdAt: new Date().toISOString(),
+      lines: snapshot,
+      pendingItems: result.pendingItems,
+    });
     clear();
     setNotice({
       kind: "ok",
       text: `Order ${result.orderId} registered. Our support team will contact you with the payment details.`,
     });
+  };
+
+  const copyAddress = async (address: string) => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setNotice({ kind: "ok", text: "Payment address copied to the clipboard." });
+    } catch {
+      setNotice({ kind: "error", text: "Could not copy the address. Select it manually." });
+    }
   };
 
   return (
@@ -343,6 +361,10 @@ function CartPage() {
                 </tr>
               </tbody>
             </table>
+
+            {order ? (
+              <PaymentPanel order={order} onCopy={(address) => void copyAddress(address)} />
+            ) : null}
           </div>
         </div>
       </div>

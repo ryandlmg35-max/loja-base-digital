@@ -1,12 +1,21 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { CartLine } from "@/lib/cart";
 
-export type OrderResult = { ok: true; orderId: string } | { ok: false; error: string };
+export type OrderResult =
+  | {
+      ok: true;
+      orderId: string;
+      total: number;
+      linkedItems: number;
+      pendingItems: string[];
+    }
+  | { ok: false; error: string };
 
 /**
  * Creates the order in the Supabase tables that Lovable already provisioned:
  * `pedidos` (header) + `pedido_itens` (lines). Products are matched by name against
- * `produtos`, so run seed/catalogo.sql once to have the catalog in the database.
+ * `produtos`; run the catalog sync (POST /api/sync-catalog) or seed/catalogo.sql so
+ * every line is stored. Lines without a matching row are reported back to the UI.
  */
 export async function createOrder(lines: CartLine[], total: number): Promise<OrderResult> {
   if (lines.length === 0) {
@@ -33,13 +42,7 @@ export async function createOrder(lines: CartLine[], total: number): Promise<Ord
     idByName.set(row.nome.trim().toLowerCase(), row.id);
   }
 
-  const missing = names.filter((name) => !idByName.has(name.trim().toLowerCase()));
-  if (missing.length > 0) {
-    return {
-      ok: false,
-      error: `Products missing in the database: ${missing.join(", ")}. Run seed/catalogo.sql first.`,
-    };
-  }
+  const pendingItems = names.filter((name) => !idByName.has(name.trim().toLowerCase()));
 
   const { data: pedido, error: orderError } = await supabase
     .from("pedidos")
@@ -51,20 +54,29 @@ export async function createOrder(lines: CartLine[], total: number): Promise<Ord
     return { ok: false, error: orderError?.message ?? "Could not create the order." };
   }
 
-  const itens = lines.map((line) => ({
-    pedido_id: pedido.id,
-    produto_id: idByName.get(line.product.name.trim().toLowerCase()) ?? "",
-    quantidade: line.qty,
-    preco_unitario: line.product.price,
-  }));
+  const linked = lines.filter((line) => !pendingItems.includes(line.product.name));
+  if (linked.length > 0) {
+    const itens = linked.map((line) => ({
+      pedido_id: pedido.id,
+      produto_id: idByName.get(line.product.name.trim().toLowerCase()) ?? "",
+      quantidade: line.qty,
+      preco_unitario: line.product.price,
+    }));
 
-  const { error: itemsError } = await supabase.from("pedido_itens").insert(itens);
+    const { error: itemsError } = await supabase.from("pedido_itens").insert(itens);
 
-  if (itemsError) {
-    // Roll back the header so no half-written order stays in the database.
-    await supabase.from("pedidos").delete().eq("id", pedido.id);
-    return { ok: false, error: itemsError.message };
+    if (itemsError) {
+      // Roll back the header so no half-written order stays in the database.
+      await supabase.from("pedidos").delete().eq("id", pedido.id);
+      return { ok: false, error: itemsError.message };
+    }
   }
 
-  return { ok: true, orderId: pedido.id };
+  return {
+    ok: true,
+    orderId: pedido.id,
+    total,
+    linkedItems: linked.length,
+    pendingItems,
+  };
 }
