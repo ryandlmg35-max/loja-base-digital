@@ -1,0 +1,14 @@
+/*
+ * The store is a faithful clone of the original layout, which ships Bootstrap 2.3.2 +
+ * Font Awesome 2/3. src/styles.css still loads Tailwind v4, whose preflight reset forces
+ * `img { display: block }` — that breaks the inline payment icons and the logo of the
+ * original header. Everything else is already covered by Bootstrap's own normalize.
+ */
+img {
+  display: inline;
+}
+
+/* The original pages offset the fixed navbar with an inline !important padding. */
+.site-container {
+  padding-top: 85px !important;
+}

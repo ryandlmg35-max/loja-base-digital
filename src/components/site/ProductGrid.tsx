@@ -1,0 +1,62 @@
+﻿import { Link } from "@tanstack/react-router";
+import type { Product } from "@/data/catalog";
+import { NO_AUTO_ACTIVE_CLASS } from "./link";
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    out.push(items.slice(i, i + size));
+  }
+  return out;
+}
+
+export function ProductGrid({ products }: { products: Product[] }) {
+  if (products.length === 0) {
+    return <div className="row-fluid">No products found</div>;
+  }
+
+  return (
+    <div className="row-fluid">
+      {chunk(products, 3).map((row, rowIndex) => (
+        <ul className="thumbnails" key={rowIndex}>
+          {row.map((product) => (
+            <li className="span4" key={product.id}>
+              <div className="thumbnail">
+                <Link
+                  {...NO_AUTO_ACTIVE_CLASS}
+                  to="/product/$id"
+                  params={{ id: String(product.id) }}
+                >
+                  <img src={product.image} alt={product.name} />
+                </Link>
+                <div className="caption cntr">
+                  <Link
+                    {...NO_AUTO_ACTIVE_CLASS}
+                    to="/product/$id"
+                    params={{ id: String(product.id) }}
+                  >
+                    <h5>{product.name}</h5>
+                  </Link>
+                  <p>
+                    <strong>${product.price.toFixed(2)}</strong>
+                  </p>
+                  <h4>
+                    <Link
+                      {...NO_AUTO_ACTIVE_CLASS}
+                      className="shopBtn"
+                      to="/product/$id"
+                      params={{ id: String(product.id) }}
+                      title="add to cart"
+                    >
+                      <span className="icon-zoom-in" /> View
+                    </Link>
+                  </h4>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  );
+}
