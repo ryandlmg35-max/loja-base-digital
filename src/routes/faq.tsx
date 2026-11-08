@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { useLang, useT } from "@/i18n/context";
+import { FAQ_PT } from "@/i18n/catalog-text";
 import { FAQ_SECTIONS, SITE } from "@/data/catalog";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
-      { title: `FAQ - ${SITE.name}: ðŸ§ª âš—ï¸ ðŸ’Š American Pharma` },
+      { title: `Perguntas frequentes - ${SITE.name}` },
       { name: "description", content: SITE.description },
       { name: "keywords", content: SITE.keywords },
     ],
@@ -14,15 +16,23 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FaqPage() {
+  const t = useT();
+  const { lang } = useLang();
+
+  const sections =
+    lang === "en"
+      ? FAQ_SECTIONS.map((section) => ({ title: section.title, html: section.html }))
+      : FAQ_PT;
+
   return (
     <SiteLayout>
       <div className="row" />
       <div className="well well-small">
-        <h2>Frequently-Asked-Questions</h2>
+        <h2>{t("faq.title")}</h2>
         <hr className="soften" />
         <div className="row-fluid">
           <div className="span12">
-            {FAQ_SECTIONS.map((section) => (
+            {sections.map((section) => (
               <div key={section.title}>
                 <ul id="productDetail" className="nav nav-tabs">
                   <li className="active">

@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
 import { handleImageError } from "@/components/site/image";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { vendorRank, vendorSelling } from "@/i18n/catalog-text";
+import { useLang, useT } from "@/i18n/context";
 import { SITE, getVendor } from "@/data/catalog";
 
 export const Route = createFileRoute("/vendor/$id")({
@@ -9,7 +11,7 @@ export const Route = createFileRoute("/vendor/$id")({
     const vendor = getVendor(Number(params["id"]));
     return {
       meta: [
-        { title: `Vendor ${vendor?.name ?? "details"} - ${SITE.name}: 🧪 ⚗️ 💊 American Pharma` },
+        { title: `Vendedor ${vendor?.name ?? ""} - ${SITE.name}` },
         { name: "description", content: SITE.description },
       ],
     };
@@ -18,6 +20,8 @@ export const Route = createFileRoute("/vendor/$id")({
 });
 
 function VendorPage() {
+  const t = useT();
+  const { lang } = useLang();
   const { id } = Route.useParams();
   const vendor = getVendor(Number(id));
 
@@ -26,10 +30,10 @@ function VendorPage() {
       <SiteLayout>
         <div className="row" />
         <div className="well well-small alert alert-warning cntr">
-          <h2>Error</h2>
-          <p>Vendor not found</p>
+          <h2>{t("vendor.error")}</h2>
+          <p>{t("vendor.notFound")}</p>
           <Link {...NO_AUTO_ACTIVE_CLASS} className="defaultBtn" to="/">
-            Go back home
+            {t("vendor.goHome")}
           </Link>
         </div>
       </SiteLayout>
@@ -40,7 +44,7 @@ function VendorPage() {
     <SiteLayout>
       <div className="row" />
       <div className="well well-small">
-        <h3>Vendor details</h3>
+        <h3>{t("vendor.details")}</h3>
         <hr className="soften" />
         <div className="row-fluid">
           <div className="span12">
@@ -51,35 +55,37 @@ function VendorPage() {
             <tbody>
               <tr>
                 <td style={{ paddingRight: 20 }}>
-                  <b>Rank:</b>
+                  <b>{t("vendor.rank")}</b>
                 </td>
-                <td>{vendor.rank}</td>
+                <td>{vendorRank(vendor, lang)}</td>
               </tr>
               <tr>
                 <td style={{ paddingRight: 20 }}>
-                  <b>Active since:</b>
+                  <b>{t("vendor.activeSince")}</b>
                 </td>
                 <td>{vendor.activeSince}</td>
               </tr>
               <tr>
                 <td style={{ paddingRight: 20 }}>
-                  <b>Selling :</b>
+                  <b>{t("vendor.selling")}</b>
                 </td>
-                <td>{vendor.selling}</td>
+                <td>{vendorSelling(vendor, lang)}</td>
               </tr>
               <tr>
                 <td style={{ paddingRight: 20 }}>
-                  <b>Feedbacks:</b>
+                  <b>{t("vendor.feedbacks")}</b>
                 </td>
                 <td>
                   {vendor.totalFeedbacks} -{" "}
-                  <span className="text-success">{vendor.positive} positive</span> (
-                  {vendor.feedback})
+                  <span className="text-success">
+                    {vendor.positive} {t("vendor.positive")}
+                  </span>{" "}
+                  ({vendor.feedback})
                 </td>
               </tr>
               <tr>
                 <td style={{ paddingRight: 20 }}>
-                  <b>Last sale:</b>
+                  <b>{t("vendor.lastSale")}</b>
                 </td>
                 <td>{vendor.lastSale}</td>
               </tr>

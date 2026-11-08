@@ -5,6 +5,7 @@ import { ProductGrid } from "@/components/site/ProductGrid";
 import { ShippingButtons } from "@/components/site/ShippingButtons";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SitePagination } from "@/components/site/SitePagination";
+import { useT } from "@/i18n/context";
 import { SITE } from "@/data/catalog";
 import { useCatalog } from "@/lib/catalog-db";
 
@@ -15,10 +16,10 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: `Home - All Categories - ${SITE.name}: 🧪 ⚗️ 💊 American Pharma` },
+      { title: `InÃ­cio - Todas as categorias - ${SITE.name}` },
       { name: "description", content: SITE.description },
       { name: "keywords", content: SITE.keywords },
-      { property: "og:title", content: `${SITE.name} — American Pharma` },
+      { property: "og:title", content: `${SITE.name} - American Pharma` },
       { property: "og:description", content: SITE.tagline },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
+  const t = useT();
   const { page = 1 } = Route.useSearch();
   const { products } = useCatalog();
 
@@ -45,7 +47,7 @@ function HomePage() {
           <ShippingButtons />
           <div className="well well-small">
             <center>
-              <h3>All categories</h3>
+              <h3>{t("home.allCategories")}</h3>
             </center>
             <ProductGrid products={visible} />
             <SitePagination page={current} totalPages={totalPages} />

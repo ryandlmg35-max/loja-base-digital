@@ -17,6 +17,44 @@ construído por cima da base Lovable (TanStack Start + Supabase + Drizzle).
 - **Rotas**: `/`, `/cat/$id`, `/product/$id`, `/faq`, `/login`, `/support`, `/cart`, `/toplist`, `/vendor/$id`
   e `/admin` (painel interno de sincronização do catálogo). A listagem faz 12 produtos por página em
   7 páginas, igual ao original.
+- **Bilíngue (pt-BR + en)**: o site abre em português e tem um seletor de idioma no canto direito da
+  navbar (ver "Idiomas" abaixo).
+
+### Idiomas (pt-BR / en)
+
+O site inteiro é bilíngue: **português (Brasil) por padrão** e **inglês** (o idioma do site original).
+O seletor fica no canto direito da navbar (`PT-BR` / `EN`) e a escolha fica salva no navegador
+(`localStorage`, chave `steroid-store.lang.v1`) — vale para vitrine, produto, carrinho, checkout e
+suporte.
+
+| arquivo | o que guarda |
+| --- | --- |
+| `src/i18n/types.ts` | lista de idiomas, `DEFAULT_LANG` (pt-BR) e a chave do localStorage |
+| `src/i18n/strings.ts` | todo o texto da interface (nav, botões, formulários, painel admin, erros) em pt-BR e en |
+| `src/i18n/context.ts` | contexto + hooks `useLang()` / `useT()` (fora do provider, cai no inglês) |
+| `src/i18n/provider.tsx` | `<LanguageProvider>` — aplica o idioma e atualiza `<html lang>` |
+| `src/i18n/catalog-text.ts` | nomes dos 79 produtos, das 15 categorias, FAQ completo e textos de estoque/vendor em pt-BR |
+| `src/i18n/product-content.ts` | traducción das descrições longas (frase a frase) |
+| `src/components/site/LanguagePicker.tsx` | o dropdown da navbar |
+| `src/data/product-sentences.en.json` | as 423 frases únicas das descrições (gerado) |
+| `src/data/product-sentences.pt-{1,2,3}.json` | a tradução pt-BR dessas 423 frases |
+
+As descrições longas dos 79 produtos são copy do fornecedor e vinham em blocos de texto; o tradutor
+quebra em frases, troca cada uma pelo dicionário e devolve o texto montado. Frase sem tradução (por
+exemplo, descrição editada direto no banco) continua no original — a página nunca quebra.
+
+O dicionário é regenerado/validado por script, com checksum por bloco: se o catálogo mudar, a
+validação acusa o desalinhamento em vez de traduzir a coisa errada.
+
+```sh
+node scripts/build-product-sentences.mjs          # regenera o .en.json e valida os blocos .pt-*.json
+node scripts/build-product-sentences.mjs --list   # imprime as frases numeradas para traduzir
+```
+
+**Para adicionar outro idioma:** copie `src/data/product-sentences.en.json` para
+`product-sentences.<idioma>-N.json` com o mesmo formato (`from`, `to`, `checksum`, `sentences`),
+preencha `sentences` com a tradução, cadastre o idioma em `src/i18n/types.ts`, acrescente o dicionário
+em `src/i18n/strings.ts` e importe o bloco novo em `src/i18n/product-content.ts`.
 
 ### Banco de dados (o que a Lovable já deixou pronto)
 
@@ -126,8 +164,9 @@ O harness de navegador fica em `scripts/e2e-store.mjs` (Playwright + Chromium do
 
 ```sh
 npm i playwright-core
-node scripts/e2e-store.mjs          # 31 checks: home, produto, carrinho, cadastro, login,
-                                    # persistência, FAQ, toplist, vendor, categorias, admin, 404
+node scripts/e2e-store.mjs          # 42 checks: home, produto, carrinho, cadastro, login,
+                                    # persistência, FAQ, toplist, vendor, categorias, admin, 404,
+                                    # troca de idioma (pt-BR -> en -> pt-BR) e persistência do idioma
 ```
 
 Ele roda contra o dev server (`BASE_URL` para trocar) e salva screenshots + `e2e-report.json` em
@@ -144,6 +183,7 @@ Ele roda contra o dev server (`BASE_URL` para trocar) e salva screenshots + `e2e
 | login | E2E: senha errada → `Invalid login credentials`; e-mail não confirmado → aviso + botão de reenvio | ok |
 | checkout → `pedidos` + `pedido_itens` | teste de integração com o cliente Supabase mockado (5 casos, incl. rollback) | ok |
 | painel de pagamento | teste de componente (`PaymentPanel`: recibo, itens, endereços, aviso de linhas pendentes) | ok |
+| idiomas (pt-BR/en) | 10 testes de i18n + E2E com troca de idioma, reload e descrição longa em ambas as línguas | ok |
 | `/api/register`, `/api/sync-catalog` | curl local: `503 admin_key_unavailable` (sem service-role key) e `403` cross-origin | ok |
 | escrita real no banco | exige conta confirmada + catálogo no banco — passos abaixo | bloqueado no projeto |
 

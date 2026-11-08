@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { useT } from "@/i18n/context";
 import { PRODUCTS } from "@/data/catalog";
 import { SITE } from "@/data/catalog";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
-    meta: [{ title: `Store admin - ${SITE.name}` }],
+    meta: [{ title: `Painel da loja - ${SITE.name}` }],
   }),
   component: AdminPage,
 });
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/admin")({
 type SyncResult = { ok: boolean; message: string; detail?: string | undefined };
 
 function AdminPage() {
+  const t = useT();
   const [user, setUser] = useState<User | null>(null);
   const [result, setResult] = useState<SyncResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -49,7 +51,10 @@ function AdminPage() {
       if (response.ok && payload?.ok) {
         setResult({
           ok: true,
-          message: `Catalog synced: ${payload.inserted ?? 0} inserted, ${payload.updated ?? 0} updated.`,
+          message: t("admin.syncOk", {
+            inserted: payload.inserted ?? 0,
+            updated: payload.updated ?? 0,
+          }),
         });
       } else {
         setResult({
@@ -68,21 +73,17 @@ function AdminPage() {
     <SiteLayout>
       <div className="row" />
       <div className="well well-small">
-        <h2>Store admin</h2>
+        <h2>{t("admin.title")}</h2>
         <hr className="soften" />
 
         <p>
-          Logged in as: <b>{user?.email ?? "nobody — login first"}</b>
+          {t("admin.loggedInAs")} <b>{user?.email ?? t("admin.nobody")}</b>
         </p>
 
-        <h4>Catalog sync</h4>
-        <p>
-          Writes the {PRODUCTS.length} products of the cloned storefront into the{" "}
-          <code>produtos</code> table (prices, stock, description and image path). The checkout
-          needs it to store the order lines.
-        </p>
+        <h4>{t("admin.syncTitle")}</h4>
+        <p>{t("admin.syncIntro", { count: PRODUCTS.length })}</p>
         <button type="button" className="shopBtn" onClick={() => void sync()} disabled={busy}>
-          <span className="icon-refresh" /> {busy ? "Syncing..." : "Sync catalog to database"}
+          <span className="icon-refresh" /> {busy ? t("admin.syncing") : t("admin.syncButton")}
         </button>
         {result ? (
           <div className={result.ok ? "alert alert-success" : "alert alert-error"}>
@@ -95,18 +96,13 @@ function AdminPage() {
           </div>
         ) : null}
 
-        <h4>Manual fallback</h4>
-        <p>
-          If the sync button answers <code>admin_key_unavailable</code>, run the SQL in the Lovable
-          SQL editor (Database → SQL):
-        </p>
+        <h4>{t("admin.manualFallback")}</h4>
         <pre style={{ whiteSpace: "pre-wrap" }}>
-          {`-- 1) give your account the admin role
-insert into public.user_roles (user_id, role)
-select id, 'admin' from auth.users where email = 'SEU_EMAIL';
+          {`${t("admin.sqlAdmin")}
+${t("admin.sqlInsert")}
 
--- 2) load the catalog
-\\i seed/catalogo.sql`}
+${t("admin.sqlCatalog")}
+${t("admin.sqlFile")}`}
         </pre>
       </div>
     </SiteLayout>

@@ -2,12 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { useT } from "@/i18n/context";
 import { SITE } from "@/data/catalog";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: `Support - ${SITE.name}: 🧪 ⚗️ 💊 American Pharma` },
+      { title: `Suporte - ${SITE.name}` },
       { name: "description", content: SITE.description },
       { name: "keywords", content: SITE.keywords },
     ],
@@ -26,6 +27,7 @@ type SupportMessage = {
 const STORAGE_KEY = "steroid-store.support.v1";
 
 function SupportPage() {
+  const t = useT();
   const [form, setForm] = useState({ name: "", email: "", subject: "", body: "" });
   const [sent, setSent] = useState(false);
 
@@ -47,27 +49,22 @@ function SupportPage() {
     <SiteLayout>
       <div className="row" />
       <div className="well well-small">
-        <h2>Support</h2>
+        <h2>{t("support.title")}</h2>
         <hr className="soften" />
         <div className="row-fluid">
           <div className="span12">
             <p>
-              Need help with an order, a product or the shipping? Send us a message and the team
-              replies through the contact details you provide. Common answers live in the{" "}
+              {t("support.intro")}{" "}
               <Link {...NO_AUTO_ACTIVE_CLASS} to="/faq">
-                F-A-Q
+                {t("support.faqLink")}
               </Link>
               .
             </p>
-            {sent ? (
-              <div className="alert alert-success">
-                Your message has been sent. We reply within 24 hours.
-              </div>
-            ) : null}
+            {sent ? <div className="alert alert-success">{t("support.sent")}</div> : null}
             <form className="form-horizontal" onSubmit={submit}>
               <div className="control-group">
                 <label className="control-label" htmlFor="support-name">
-                  Name <sup>*</sup>
+                  {t("support.name")} <sup>*</sup>
                 </label>
                 <div className="controls">
                   <input
@@ -81,7 +78,7 @@ function SupportPage() {
               </div>
               <div className="control-group">
                 <label className="control-label" htmlFor="support-email">
-                  E-mail <sup>*</sup>
+                  {t("login.email")} <sup>*</sup>
                 </label>
                 <div className="controls">
                   <input
@@ -95,7 +92,7 @@ function SupportPage() {
               </div>
               <div className="control-group">
                 <label className="control-label" htmlFor="support-subject">
-                  Subject <sup>*</sup>
+                  {t("support.subject")} <sup>*</sup>
                 </label>
                 <div className="controls">
                   <input
@@ -109,7 +106,7 @@ function SupportPage() {
               </div>
               <div className="control-group">
                 <label className="control-label" htmlFor="support-body">
-                  Message <sup>*</sup>
+                  {t("support.message")} <sup>*</sup>
                 </label>
                 <div className="controls">
                   <textarea
@@ -124,7 +121,7 @@ function SupportPage() {
               <div className="control-group">
                 <div className="controls">
                   <button type="submit" className="shopBtn">
-                    <span className="icon-envelope" /> Send message
+                    <span className="icon-envelope" /> {t("support.send")}
                   </button>
                 </div>
               </div>

@@ -1,4 +1,6 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { productName } from "@/i18n/catalog-text";
+import { useLang, useT } from "@/i18n/context";
 import type { Product } from "@/data/catalog";
 import { NO_AUTO_ACTIVE_CLASS } from "./link";
 import { handleImageError } from "./image";
@@ -12,8 +14,11 @@ function chunk<T>(items: T[], size: number): T[][] {
 }
 
 export function ProductGrid({ products }: { products: Product[] }) {
+  const t = useT();
+  const { lang } = useLang();
+
   if (products.length === 0) {
-    return <div className="row-fluid">No products found</div>;
+    return <div className="row-fluid">{t("grid.noProducts")}</div>;
   }
 
   return (
@@ -28,7 +33,11 @@ export function ProductGrid({ products }: { products: Product[] }) {
                   to="/product/$id"
                   params={{ id: String(product.id) }}
                 >
-                  <img src={product.image} alt={product.name} onError={handleImageError} />
+                  <img
+                    src={product.image}
+                    alt={productName(product, lang)}
+                    onError={handleImageError}
+                  />
                 </Link>
                 <div className="caption cntr">
                   <Link
@@ -36,7 +45,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                     to="/product/$id"
                     params={{ id: String(product.id) }}
                   >
-                    <h5>{product.name}</h5>
+                    <h5>{productName(product, lang)}</h5>
                   </Link>
                   <p>
                     <strong>${product.price.toFixed(2)}</strong>
@@ -47,9 +56,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
                       className="shopBtn"
                       to="/product/$id"
                       params={{ id: String(product.id) }}
-                      title="add to cart"
+                      title={t("home.addToCart")}
                     >
-                      <span className="icon-zoom-in" /> View
+                      <span className="icon-zoom-in" /> {t("home.view")}
                     </Link>
                   </h4>
                 </div>

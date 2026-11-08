@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
+import { useT } from "@/i18n/context";
 import { getPaymentMethods } from "@/data/payments";
 import type { CartLine } from "@/lib/cart";
 
@@ -25,38 +26,39 @@ export function PaymentPanel({
   order: PlacedOrder;
   onCopy?: (address: string) => void;
 }) {
+  const t = useT();
   const methods = getPaymentMethods();
   const configured = methods.filter((method) => method.address.length > 0);
 
   return (
     <div className="well" data-testid="payment-panel">
-      <h3>Order registered</h3>
+      <h3>{t("cart.orderRegistered")}</h3>
       <hr className="soften" />
       <table className="table table-bordered table-condensed">
         <tbody>
           <tr>
             <td style={{ paddingRight: 20 }}>
-              <b>Order:</b>
+              <b>{t("cart.order")}</b>
             </td>
             <td>{order.id}</td>
           </tr>
           <tr>
             <td style={{ paddingRight: 20 }}>
-              <b>Date:</b>
+              <b>{t("cart.date")}</b>
             </td>
             <td>{new Date(order.createdAt).toLocaleString()}</td>
           </tr>
           <tr>
             <td style={{ paddingRight: 20 }}>
-              <b>Status:</b>
+              <b>{t("cart.status")}</b>
             </td>
             <td>
-              <span className="label label-warning">Pending payment</span>
+              <span className="label label-warning">{t("cart.pendingPayment")}</span>
             </td>
           </tr>
           <tr>
             <td style={{ paddingRight: 20 }}>
-              <b>Total:</b>
+              <b>{t("cart.grandTotal")}</b>
             </td>
             <td>
               <b>{usd(order.total)}</b>
@@ -65,13 +67,13 @@ export function PaymentPanel({
         </tbody>
       </table>
 
-      <h4>Items</h4>
+      <h4>{t("cart.items")}</h4>
       <table className="table table-bordered table-condensed">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Qty.</th>
-            <th>Total</th>
+            <th>{t("cart.name")}</th>
+            <th>{t("cart.qty")}</th>
+            <th>{t("cart.total")}</th>
           </tr>
         </thead>
         <tbody>
@@ -87,13 +89,11 @@ export function PaymentPanel({
 
       {order.pendingItems.length > 0 ? (
         <div className="alert alert-warning">
-          These products are not in the database yet, so their lines were not stored:{" "}
-          {order.pendingItems.join(", ")}. Run the catalog sync from the admin page to complete the
-          order records.
+          {t("cart.pendingWarning", { items: order.pendingItems.join(", ") })}
         </div>
       ) : null}
 
-      <h4>Payment methods</h4>
+      <h4>{t("cart.paymentMethods")}</h4>
       {configured.length > 0 ? (
         <table className="table table-bordered table-condensed">
           <tbody>
@@ -112,7 +112,7 @@ export function PaymentPanel({
                         onCopy(method.address);
                       }}
                     >
-                      copy
+                      {t("cart.copy")}
                     </a>
                   ) : null}
                 </td>
@@ -122,18 +122,15 @@ export function PaymentPanel({
         </table>
       ) : (
         <p>
-          Payment addresses are published by the store on the{" "}
+          {t("cart.paymentFallback")}{" "}
           <Link {...NO_AUTO_ACTIVE_CLASS} to="/support">
-            Support
-          </Link>{" "}
-          page. Send the order id and the payment proof there.
+            {t("nav.support")}
+          </Link>
+          .
         </p>
       )}
 
-      <p className="text-success">
-        Send the payment proof with the order id above. The order moves to <b>pago</b> as soon as
-        the payment is confirmed.
-      </p>
+      <p className="text-success">{t("cart.paymentProof")}</p>
     </div>
   );
 }

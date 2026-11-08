@@ -12,3 +12,59 @@ img {
 .site-container {
   padding-top: 85px !important;
 }
+
+/* Language picker (new): lives in the top nav, follows the original nav typography. */
+.language-picker {
+  position: relative;
+  display: inline-block;
+}
+.language-trigger {
+  border: 0;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 20px;
+  padding: 20px 4px;
+}
+.language-trigger:hover,
+.language-trigger:focus {
+  color: #fff;
+  background: #fc5ff8;
+  text-decoration: none;
+  outline: 0;
+}
+.language-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 1060;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.language-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #333;
+  font-size: 12px;
+  padding: 5px 12px;
+}
+.language-menu button:hover {
+  background: #f2f2f2;
+  color: #fc5ff8;
+}
+.language-menu button.active {
+  font-weight: bold;
+  color: #fc5ff8;
+}

@@ -1,6 +1,9 @@
+import { useT } from "@/i18n/context";
 import { SITE } from "@/data/catalog";
 
 export function HomeBanner() {
+  const t = useT();
+
   return (
     <div className="row">
       <div className="span12">
@@ -12,7 +15,7 @@ export function HomeBanner() {
                 <div className="carousel-caption">
                   <h4>{SITE.name}</h4>
                   <p>
-                    <span>{SITE.tagline}</span>
+                    <span>{t("site.tagline")}</span>
                   </p>
                 </div>
               </div>

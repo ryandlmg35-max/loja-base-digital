@@ -6,6 +6,8 @@ import { ProductGrid } from "@/components/site/ProductGrid";
 import { ShippingButtons } from "@/components/site/ShippingButtons";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SitePagination } from "@/components/site/SitePagination";
+import { categoryName } from "@/i18n/catalog-text";
+import { useLang, useT } from "@/i18n/context";
 import { SITE, getCategory } from "@/data/catalog";
 import { useCatalog } from "@/lib/catalog-db";
 
@@ -18,7 +20,7 @@ export const Route = createFileRoute("/cat/$id")({
     const category = getCategory(Number(params["id"]));
     return {
       meta: [
-        { title: `${category?.name ?? "All Categories"} - ${SITE.name}: 🧪 ⚗️ 💊 American Pharma` },
+        { title: `${category?.name ?? "Todas as categorias"} - ${SITE.name}` },
         { name: "description", content: SITE.description },
         { name: "keywords", content: SITE.keywords },
       ],
@@ -28,6 +30,8 @@ export const Route = createFileRoute("/cat/$id")({
 });
 
 function CategoryPage() {
+  const t = useT();
+  const { lang } = useLang();
   const { id } = Route.useParams();
   const { page = 1 } = Route.useSearch();
   const navigate = useNavigate();
@@ -58,7 +62,7 @@ function CategoryPage() {
           <ShippingButtons />
           <div className="well well-small">
             <center>
-              <h3>{category?.name ?? "All categories"}</h3>
+              <h3>{category ? categoryName(category, lang) : t("cat.allCategories")}</h3>
             </center>
             <ProductGrid products={visible} />
             {members.length > pageSize ? (

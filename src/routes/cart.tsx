@@ -5,6 +5,8 @@ import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
 import { handleImageError } from "@/components/site/image";
 import { PaymentPanel, type PlacedOrder } from "@/components/site/PaymentPanel";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { productName } from "@/i18n/catalog-text";
+import { useLang, useT } from "@/i18n/context";
 import { SITE } from "@/data/catalog";
 import { supabase } from "@/integrations/supabase/client";
 import { cartTotals, useCart } from "@/lib/cart";
@@ -13,7 +15,7 @@ import { createOrder } from "@/lib/orders";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: `Check out - ${SITE.name}: 🧪 ⚗️ 💊 American Pharma` },
+      { title: `Finalizar compra - ${SITE.name}` },
       { name: "description", content: SITE.description },
       { name: "keywords", content: SITE.keywords },
     ],
@@ -24,6 +26,8 @@ export const Route = createFileRoute("/cart")({
 const usd = (value: number) => `$ ${value.toFixed(2)}`;
 
 function CartPage() {
+  const t = useT();
+  const { lang } = useLang();
   const { lines, subtotal, count, setQty, remove, clear, hydrated } = useCart();
   const [user, setUser] = useState<User | null>(null);
   const [order, setOrder] = useState<PlacedOrder | null>(null);
@@ -70,10 +74,7 @@ function CartPage() {
       pendingItems: result.pendingItems,
     });
     clear();
-    setNotice({
-      kind: "ok",
-      text: `Order ${result.orderId} registered. Our support team will contact you with the payment details.`,
-    });
+    setNotice({ kind: "ok", text: t("cart.placedNotice", { id: result.orderId }) });
   };
 
   const copyAddress = async (address: string) => {
@@ -91,17 +92,17 @@ function CartPage() {
       <div className="row">
         <div className="span12">
           <div className="well well-small">
-            <h2>Check Out</h2>
+            <h2>{t("cart.checkOut")}</h2>
             <hr className="soften" />
 
             <table className="table table-bordered table-condensed">
               <thead>
                 <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Unit price</th>
-                  <th>Qty.</th>
-                  <th>Total</th>
+                  <th>{t("cart.image")}</th>
+                  <th>{t("cart.name")}</th>
+                  <th>{t("cart.unitPrice")}</th>
+                  <th>{t("cart.qty")}</th>
+                  <th>{t("cart.total")}</th>
                   <th />
                 </tr>
               </thead>
@@ -109,9 +110,9 @@ function CartPage() {
                 {hydrated && lines.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="cntr">
-                      Your cart is empty.{" "}
+                      {t("cart.empty")}{" "}
                       <Link {...NO_AUTO_ACTIVE_CLASS} to="/">
-                        Go back to the store
+                        {t("cart.goBackToStore")}
                       </Link>
                     </td>
                   </tr>
@@ -126,7 +127,7 @@ function CartPage() {
                       >
                         <img
                           src={line.product.image}
-                          alt={line.product.name}
+                          alt={productName(line.product, lang)}
                           style={{ maxHeight: 60 }}
                           onError={handleImageError}
                         />
@@ -138,7 +139,7 @@ function CartPage() {
                         to="/product/$id"
                         params={{ id: String(line.product.id) }}
                       >
-                        {line.product.name}
+                        {productName(line.product, lang)}
                       </Link>
                     </td>
                     <td>{usd(line.product.price)}</td>
@@ -164,35 +165,38 @@ function CartPage() {
                           remove(line.product.id);
                         }}
                       >
-                        <span className="icon-remove-sign" /> Remove
+                        <span className="icon-remove-sign" /> {t("cart.remove")}
                       </a>
                     </td>
                   </tr>
                 ))}
                 <tr>
                   <td colSpan={4} className="alignR">
-                    Total of products: <small>(min. order is {usd(SITE.minOrder)})</small>
+                    {t("cart.totalOfProducts")}{" "}
+                    <small>{t("cart.minOrder", { value: usd(SITE.minOrder) })}</small>
                   </td>
                   <td>{usd(subtotal)}</td>
                   <td />
                 </tr>
                 <tr>
                   <td colSpan={4} className="alignR">
-                    Referral Bonus:{" "}
+                    {t("cart.referralBonus")}
                   </td>
                   <td>{usd(SITE.referralBonus)}</td>
                   <td />
                 </tr>
                 <tr>
                   <td colSpan={4} className="alignR">
-                    Shipping <small>(Free shipping at {usd(SITE.freeShippingFrom)})</small>:
+                    {t("cart.shipping")}{" "}
+                    <small>{t("cart.freeShippingAt", { value: usd(SITE.freeShippingFrom) })}</small>
+                    :
                   </td>
                   <td>{usd(shippingCost)}</td>
                   <td />
                 </tr>
                 <tr>
                   <td colSpan={4} className="alignR">
-                    <b>Total:</b>
+                    <b>{t("cart.grandTotal")}</b>
                   </td>
                   <td>
                     <b>{usd(total)}</b>
@@ -207,7 +211,7 @@ function CartPage() {
               <tbody>
                 <tr>
                   <td>
-                    <b>Shipping data</b>
+                    <b>{t("cart.shippingData")}</b>
                   </td>
                 </tr>
                 <tr>
@@ -216,7 +220,7 @@ function CartPage() {
                       <form className="form-horizontal" onSubmit={placeOrder}>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-name">
-                            Full name <sup>*</sup>
+                            {t("cart.fullName")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -232,7 +236,7 @@ function CartPage() {
                         </div>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-address">
-                            Address <sup>*</sup>
+                            {t("cart.address")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -248,7 +252,7 @@ function CartPage() {
                         </div>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-city">
-                            City <sup>*</sup>
+                            {t("cart.city")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -264,7 +268,7 @@ function CartPage() {
                         </div>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-country">
-                            Country <sup>*</sup>
+                            {t("cart.country")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -280,7 +284,7 @@ function CartPage() {
                         </div>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-zip">
-                            ZIP
+                            {t("cart.zip")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -290,12 +294,13 @@ function CartPage() {
                               onChange={(event) =>
                                 setShipping({ ...shipping, zip: event.target.value })
                               }
+                              required
                             />
                           </div>
                         </div>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-phone">
-                            Phone
+                            {t("cart.phone")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -305,12 +310,13 @@ function CartPage() {
                               onChange={(event) =>
                                 setShipping({ ...shipping, phone: event.target.value })
                               }
+                              required
                             />
                           </div>
                         </div>
                         <div className="control-group">
                           <label className="control-label" htmlFor="ship-email">
-                            E-mail
+                            {t("cart.email")} <sup>*</sup>
                           </label>
                           <div className="controls">
                             <input
@@ -320,6 +326,7 @@ function CartPage() {
                               onChange={(event) =>
                                 setShipping({ ...shipping, email: event.target.value })
                               }
+                              required
                             />
                           </div>
                         </div>
@@ -330,7 +337,7 @@ function CartPage() {
                               className="shopBtn"
                               disabled={busy || count === 0}
                             >
-                              <span className="icon-shopping-cart" /> Place order
+                              <span className="icon-shopping-cart" /> {t("cart.placeOrder")}
                             </button>
                           </div>
                         </div>
@@ -348,11 +355,10 @@ function CartPage() {
                       <>
                         <br />
                         <b>
-                          Please{" "}
                           <Link {...NO_AUTO_ACTIVE_CLASS} to="/login">
-                            Login or Register
+                            {t("nav.login")}
                           </Link>{" "}
-                          to place an order.
+                          {t("cart.loginToOrder")}
                         </b>
                         <br />
                       </>

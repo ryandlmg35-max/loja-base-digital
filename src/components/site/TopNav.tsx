@@ -1,17 +1,20 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { LanguagePicker } from "./LanguagePicker";
+import { useT } from "@/i18n/context";
 import { useCart } from "@/lib/cart";
 import { NO_AUTO_ACTIVE_CLASS } from "./link";
 
 const LINKS = [
-  { to: "/", label: "Home", icon: "icon-home" },
-  { to: "/toplist", label: "Top List", icon: "icon-user" },
-  { to: "/faq", label: "F-A-Q", icon: "icon-question-sign" },
-  { to: "/login", label: "Login/Register", icon: "icon-user" },
-  { to: "/support", label: "Support", icon: "icon-envelope" },
-  { to: "/cart", label: "Cart", icon: "icon-shopping-cart" },
+  { to: "/", key: "nav.home", icon: "icon-home" },
+  { to: "/toplist", key: "nav.toplist", icon: "icon-user" },
+  { to: "/faq", key: "nav.faq", icon: "icon-question-sign" },
+  { to: "/login", key: "nav.login", icon: "icon-user" },
+  { to: "/support", key: "nav.support", icon: "icon-envelope" },
+  { to: "/cart", key: "nav.cart", icon: "icon-shopping-cart" },
 ] as const;
 
 export function TopNav() {
+  const t = useT();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { count, hydrated } = useCart();
 
@@ -34,12 +37,13 @@ export function TopNav() {
                 to={link.to}
                 className={isActive(link.to) ? "active" : ""}
               >
-                <span className={link.icon} /> {link.label}
+                <span className={link.icon} /> {t(link.key)}
                 {link.to === "/cart" && hydrated && count > 0 ? (
                   <span style={{ marginLeft: 4, fontWeight: "bold" }}>({count})</span>
                 ) : null}
               </Link>
             ))}
+            <LanguagePicker />
           </div>
         </div>
       </div>

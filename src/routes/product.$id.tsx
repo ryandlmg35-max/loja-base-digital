@@ -3,6 +3,9 @@ import { useState } from "react";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
 import { handleImageError } from "@/components/site/image";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { productName, productStockText } from "@/i18n/catalog-text";
+import { translateProductText } from "@/i18n/product-content";
+import { useLang, useT } from "@/i18n/context";
 import { SITE, getProduct } from "@/data/catalog";
 import { useCatalog } from "@/lib/catalog-db";
 import { useCart } from "@/lib/cart";
@@ -13,7 +16,7 @@ export const Route = createFileRoute("/product/$id")({
     return {
       meta: [
         {
-          title: `${product?.name ?? "Product not found"} - ${SITE.name}: ðŸ§ª âš—ï¸ ðŸ’Š American Pharma`,
+          title: `${product?.name ?? "Produto nÃ£o encontrado"} - ${SITE.name}`,
         },
         { name: "description", content: product?.name ?? SITE.description },
         { name: "keywords", content: SITE.keywords },
@@ -24,6 +27,8 @@ export const Route = createFileRoute("/product/$id")({
 });
 
 function ProductPage() {
+  const t = useT();
+  const { lang } = useLang();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { products } = useCatalog();
@@ -38,16 +43,17 @@ function ProductPage() {
       <SiteLayout>
         <div className="row" />
         <div className="well well-small alert alert-warning cntr">
-          <h2>Error</h2>
-          <p>Product not found</p>
+          <h2>{t("product.error")}</h2>
+          <p>{t("product.notFound")}</p>
           <Link {...NO_AUTO_ACTIVE_CLASS} className="defaultBtn" to="/">
-            Go back home
+            {t("product.goHome")}
           </Link>
         </div>
       </SiteLayout>
     );
   }
 
+  const name = productName(product, lang);
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     add(product.id, qty);
@@ -67,7 +73,7 @@ function ProductPage() {
                     <div className="item active">
                       <img
                         src={product.image}
-                        alt={product.name}
+                        alt={name}
                         style={{ width: "100%" }}
                         onError={handleImageError}
                       />
@@ -78,7 +84,7 @@ function ProductPage() {
               <div className="span7">
                 <Link {...NO_AUTO_ACTIVE_CLASS} to="/">
                   {" "}
-                  All products
+                  {t("product.allProducts")}
                 </Link>{" "}
                 <i className="icon-double-angle-right" />{" "}
                 <Link
@@ -86,16 +92,18 @@ function ProductPage() {
                   to="/cat/$id"
                   params={{ id: String(product.categories[0] ?? 0) }}
                 />
-                <h2>{product.name}</h2>
+                <h2>{name}</h2>
                 <hr className="soft" />
                 <form className="form-horizontal qtyFrm" onSubmit={submit}>
                   <input type="hidden" name="addproduct" value={product.id} />
-                  <h4>Price: $ {product.price.toFixed(2)}</h4>
+                  <h4>
+                    {t("product.price")}: $ {product.price.toFixed(2)}
+                  </h4>
                   <h4 className={product.stock ? "text-success" : "text-danger"}>
-                    {product.stockText}
+                    {productStockText(product, lang)}
                   </h4>
                   <h4>
-                    from{" "}
+                    {t("product.from")}{" "}
                     <Link
                       {...NO_AUTO_ACTIVE_CLASS}
                       to="/vendor/$id"
@@ -106,7 +114,7 @@ function ProductPage() {
                   </h4>
                   <div className="control-group">
                     <label className="control-label" htmlFor="qty">
-                      Quantity:
+                      {t("product.quantity")}
                     </label>
                     <div className="controls">
                       <input
@@ -114,7 +122,7 @@ function ProductPage() {
                         type="number"
                         className="span6"
                         name="qty"
-                        placeholder="Qty."
+                        placeholder={t("product.qtyPlaceholder")}
                         min={1}
                         max={10000}
                         value={qty}
@@ -125,10 +133,10 @@ function ProductPage() {
 
                   <center>
                     <button type="submit" className="shopBtn">
-                      <span className="icon-shopping-cart" /> Add to cart
+                      <span className="icon-shopping-cart" /> {t("product.addToCart")}
                     </button>
                     <br />
-                    <small>Final price / discounts will be calculated in the Basket.</small>
+                    <small>{t("product.finalPrice")}</small>
                   </center>
                 </form>
               </div>
@@ -139,7 +147,7 @@ function ProductPage() {
               <div
                 className="tab-pane fade active in"
                 id="home"
-                dangerouslySetInnerHTML={{ __html: product.info }}
+                dangerouslySetInnerHTML={{ __html: translateProductText(product.info, lang) }}
               />
             </div>
           </div>

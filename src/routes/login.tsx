@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { useT } from "@/i18n/context";
 import { SITE } from "@/data/catalog";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: `Register/Login - ${SITE.name}: 🧪 ⚗️ 💊 American Pharma` },
+      { title: `Cadastro/Login - ${SITE.name}` },
       { name: "description", content: SITE.description },
       { name: "keywords", content: SITE.keywords },
     ],
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/login")({
 type Notice = { kind: "ok" | "error"; text: string } | null;
 
 function LoginPage() {
+  const t = useT();
   const [user, setUser] = useState<User | null>(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -41,11 +43,11 @@ function LoginPage() {
     setRegisterNotice(null);
 
     if (password !== password2) {
-      setRegisterNotice({ kind: "error", text: "Passwords do not match." });
+      setRegisterNotice({ kind: "error", text: t("login.passwordsDontMatch") });
       return;
     }
     if (password.length < 6) {
-      setRegisterNotice({ kind: "error", text: "Password must have at least 6 characters." });
+      setRegisterNotice({ kind: "error", text: t("login.weakPassword") });
       return;
     }
 
@@ -68,10 +70,7 @@ function LoginPage() {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
         if (payload?.error === "email_taken") {
           setBusy(false);
-          setRegisterNotice({
-            kind: "error",
-            text: "This email is already registered. Try to login.",
-          });
+          setRegisterNotice({ kind: "error", text: t("login.emailTaken") });
           return;
         }
       }
@@ -86,7 +85,7 @@ function LoginPage() {
         setRegisterNotice({ kind: "error", text: error.message });
         return;
       }
-      setRegisterNotice({ kind: "ok", text: "Account created. You are logged in." });
+      setRegisterNotice({ kind: "ok", text: t("login.accountCreated") });
       return;
     }
 
@@ -103,11 +102,8 @@ function LoginPage() {
     }
     setRegisterNotice(
       data.session
-        ? { kind: "ok", text: "Account created. You are logged in." }
-        : {
-            kind: "ok",
-            text: "Account created. Confirm your email to log in — you can resend the confirmation email from the login form.",
-          },
+        ? { kind: "ok", text: t("login.accountCreated") }
+        : { kind: "ok", text: t("login.confirmEmail") },
     );
   };
 
@@ -127,14 +123,14 @@ function LoginPage() {
       setLoginNotice({ kind: "error", text: error.message });
       return;
     }
-    setLoginNotice({ kind: "ok", text: "Confirmation email sent again. Check your inbox." });
+    setLoginNotice({ kind: "ok", text: t("login.confirmationSent") });
   };
 
   const logout = async () => {
     setBusy(true);
     await supabase.auth.signOut();
     setBusy(false);
-    setRegisterNotice({ kind: "ok", text: "You are logged out." });
+    setRegisterNotice({ kind: "ok", text: t("login.loggedOut") });
   };
 
   const needsConfirmation =
@@ -148,11 +144,11 @@ function LoginPage() {
         <div className="row-fluid">
           <div className="span6">
             <div className="well">
-              <h3>Create Account</h3>
+              <h3>{t("login.createAccount")}</h3>
               {user ? (
                 <div>
                   <p>
-                    You are logged in as <b>{user.email}</b>
+                    {t("login.loggedInAs")} <b>{user.email}</b>
                   </p>
                   <button
                     type="button"
@@ -160,21 +156,21 @@ function LoginPage() {
                     onClick={() => void logout()}
                     disabled={busy}
                   >
-                    Logout
+                    {t("login.logout")}
                   </button>
                 </div>
               ) : (
                 <form className="form-horizontal" onSubmit={register}>
                   <div className="control-group">
                     <label className="control-label" htmlFor="username">
-                      Username <sup>*</sup>
+                      {t("login.username")} <sup>*</sup>
                     </label>
                     <div className="controls">
                       <input
                         type="text"
                         id="username"
                         name="username"
-                        placeholder="Username"
+                        placeholder={t("login.username")}
                         value={username}
                         onChange={(event) => setUsername(event.target.value)}
                         required
@@ -183,14 +179,14 @@ function LoginPage() {
                   </div>
                   <div className="control-group">
                     <label className="control-label" htmlFor="register-email">
-                      Email <sup>*</sup>
+                      {t("login.email")} <sup>*</sup>
                     </label>
                     <div className="controls">
                       <input
                         type="email"
                         id="register-email"
                         name="email"
-                        placeholder="Email"
+                        placeholder={t("login.email")}
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                         required
@@ -199,12 +195,12 @@ function LoginPage() {
                   </div>
                   <div className="control-group">
                     <label className="control-label" htmlFor="pass1">
-                      Password <sup>*</sup>
+                      {t("login.password")} <sup>*</sup>
                     </label>
                     <div className="controls">
                       <input
                         type="password"
-                        placeholder="Password"
+                        placeholder={t("login.password")}
                         id="pass1"
                         name="pass1"
                         value={password}
@@ -216,13 +212,13 @@ function LoginPage() {
                   </div>
                   <div className="control-group">
                     <label className="control-label" htmlFor="pass2">
-                      Password (repeat)
+                      {t("login.passwordRepeat")}
                       <sup>*</sup>
                     </label>
                     <div className="controls">
                       <input
                         type="password"
-                        placeholder="Password"
+                        placeholder={t("login.passwordRepeat")}
                         id="pass2"
                         name="pass2"
                         value={password2}
@@ -236,7 +232,7 @@ function LoginPage() {
                   <div className="control-group">
                     <div className="controls">
                       <button type="submit" className="exclusive shopBtn" disabled={busy}>
-                        Register
+                        {t("login.register")}
                       </button>
                     </div>
                   </div>
@@ -255,18 +251,18 @@ function LoginPage() {
           </div>
           <div className="span6">
             <div className="well">
-              <h3>Login</h3>
+              <h3>{t("login.login")}</h3>
               <form className="form-horizontal" onSubmit={login}>
                 <div className="control-group">
                   <label className="control-label" htmlFor="login-email">
-                    Email <sup>*</sup>
+                    {t("login.email")} <sup>*</sup>
                   </label>
                   <div className="controls">
                     <input
                       type="email"
                       id="login-email"
                       name="username"
-                      placeholder="Email"
+                      placeholder={t("login.email")}
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       required
@@ -275,12 +271,12 @@ function LoginPage() {
                 </div>
                 <div className="control-group">
                   <label className="control-label" htmlFor="login-pass">
-                    Password <sup>*</sup>
+                    {t("login.password")} <sup>*</sup>
                   </label>
                   <div className="controls">
                     <input
                       type="password"
-                      placeholder="Password"
+                      placeholder={t("login.password")}
                       id="login-pass"
                       name="pass1"
                       value={password}
@@ -293,7 +289,7 @@ function LoginPage() {
                 <div className="control-group">
                   <div className="controls">
                     <button type="submit" className="exclusive shopBtn" disabled={busy}>
-                      Login
+                      {t("login.login")}
                     </button>
                     {needsConfirmation ? (
                       <button
@@ -303,7 +299,7 @@ function LoginPage() {
                         onClick={() => void resendConfirmation()}
                         disabled={busy}
                       >
-                        Resend confirmation
+                        {t("login.resendConfirmation")}
                       </button>
                     ) : null}
                   </div>
