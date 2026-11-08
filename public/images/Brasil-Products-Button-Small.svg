@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196 94" width="196" height="94" role="img" aria-label="Brasil">
+  <defs>
+    <linearGradient id="boxFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6c69c" />
+      <stop offset="1" stop-color="#c8a172" />
+    </linearGradient>
+    <linearGradient id="boxSide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b98f60" />
+      <stop offset="1" stop-color="#9a7247" />
+    </linearGradient>
+  </defs>
+
+  <!-- caixa de papelão -->
+  <polygon points="18,26 34,13 106,13 90,26" fill="#efd7b4" stroke="#9d7748" stroke-width="1.6" />
+  <polygon points="90,26 106,13 106,71 90,84" fill="url(#boxSide)" stroke="#9d7748" stroke-width="1.6" />
+  <rect x="18" y="26" width="72" height="58" fill="url(#boxFront)" stroke="#9d7748" stroke-width="1.6" />
+  <rect x="18" y="45" width="72" height="9" fill="#e9d7b6" opacity="0.9" />
+  <polygon points="44,13 56,13 62,26 50,26" fill="#e9d7b6" opacity="0.9" />
+
+  <!-- bandeira do Brasil colada na caixa -->
+  <g>
+    <rect x="26" y="31" width="56" height="37" fill="#009739" stroke="#6d6d6d" stroke-width="0.8" />
+    <polygon points="54,32 79,49.5 54,67 29,49.5" fill="#ffdf00" />
+    <circle cx="54" cy="49.5" r="8.5" fill="#002776" />
+    <g transform="rotate(-10 54 49.5)">
+      <rect x="38.5" y="47" width="31" height="5" fill="#ffffff" />
+      <text x="54" y="50.8" font-family="Arial, Helvetica, sans-serif" font-size="3.6" fill="#002776" text-anchor="middle">ORDEM E PROGRESSO</text>
+    </g>
+  </g>
+
+  <text x="103" y="62" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" fill="#111111">BRASIL</text>
+</svg>

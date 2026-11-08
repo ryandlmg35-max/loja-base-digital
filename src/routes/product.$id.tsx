@@ -7,6 +7,7 @@ import { productName, productStockText } from "@/i18n/catalog-text";
 import { translateProductText } from "@/i18n/product-content";
 import { useLang, useT } from "@/i18n/context";
 import { SITE, getProduct } from "@/data/catalog";
+import { formatBRL } from "@/data/store";
 import { useCatalog } from "@/lib/catalog-db";
 import { useCart } from "@/lib/cart";
 
@@ -97,7 +98,7 @@ function ProductPage() {
                 <form className="form-horizontal qtyFrm" onSubmit={submit}>
                   <input type="hidden" name="addproduct" value={product.id} />
                   <h4>
-                    {t("product.price")}: $ {product.price.toFixed(2)}
+                    {t("product.price")}: {formatBRL(product.price, lang)}
                   </h4>
                   <h4 className={product.stock ? "text-success" : "text-danger"}>
                     {productStockText(product, lang)}

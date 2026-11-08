@@ -44,7 +44,7 @@ describe("Cloned catalog", () => {
   });
 
   it("resolves products and vendors by id", () => {
-    expect(getProduct(145)?.price).toBe(27);
+    expect(getProduct(145)?.price).toBe(148.5);
     expect(getProduct(1)).toBeUndefined();
     expect(getVendor(1)?.name).toBe("Ralts");
     expect(VENDORS).toHaveLength(3);
@@ -61,9 +61,9 @@ describe("Cloned catalog", () => {
     ]);
   });
 
-  it("keeps the commercial rules of the original cart", () => {
-    expect(SITE.minOrder).toBe(60);
-    expect(SITE.shippingCost).toBe(5);
-    expect(SITE.freeShippingFrom).toBe(200);
+  it("keeps the commercial rules of the Brazilian cart", () => {
+    expect(SITE.minOrder).toBe(330);
+    expect(SITE.shippingCost).toBe(27.5);
+    expect(SITE.freeShippingFrom).toBe(1100);
   });
 });

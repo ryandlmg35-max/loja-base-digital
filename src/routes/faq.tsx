@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { useLang, useT } from "@/i18n/context";
-import { FAQ_PT } from "@/i18n/catalog-text";
-import { FAQ_SECTIONS, SITE } from "@/data/catalog";
+import { FAQ_EN, FAQ_PT } from "@/i18n/catalog-text";
+import { SITE } from "@/data/catalog";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -19,10 +19,7 @@ function FaqPage() {
   const t = useT();
   const { lang } = useLang();
 
-  const sections =
-    lang === "en"
-      ? FAQ_SECTIONS.map((section) => ({ title: section.title, html: section.html }))
-      : FAQ_PT;
+  const sections = lang === "en" ? FAQ_EN : FAQ_PT;
 
   return (
     <SiteLayout>

@@ -4,7 +4,7 @@ import { cartTotals } from "@/lib/cart";
 
 describe("cartTotals", () => {
   it("charges the flat shipping fee below the free-shipping threshold", () => {
-    expect(cartTotals(54)).toEqual({ shippingCost: SITE.shippingCost, total: 59 });
+    expect(cartTotals(297)).toEqual({ shippingCost: SITE.shippingCost, total: 324.5 });
   });
 
   it("ships free from the threshold", () => {

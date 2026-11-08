@@ -22,7 +22,7 @@ function Probe() {
     <div>
       <span data-testid="lang">{lang}</span>
       <span data-testid="title">{t("home.allCategories")}</span>
-      <span data-testid="interpolated">{t("cart.minOrder", { value: "$ 60.00" })}</span>
+      <span data-testid="interpolated">{t("cart.minOrder", { value: "R$ 330,00" })}</span>
       <button type="button" onClick={() => setLang("en")}>
         switch
       </button>
@@ -58,7 +58,7 @@ describe("i18n provider", () => {
 
     expect(screen.getByTestId("lang")).toHaveTextContent("en");
     expect(screen.getByTestId("title")).toHaveTextContent("All categories");
-    expect(screen.getByTestId("interpolated")).toHaveTextContent("min. order is $ 60.00");
+    expect(screen.getByTestId("interpolated")).toHaveTextContent("min. order is R$ 330,00");
   });
 
   it("keeps the choice in localStorage and restores it on the next visit", () => {
@@ -126,6 +126,9 @@ describe("catalog translation", () => {
       expect(category).toBeTruthy();
       expect(CATEGORY_NAMES_PT[category!.id]).toBeTruthy();
     }
+
+    expect(CATEGORY_NAMES_PT[0]).toBe("Todos os produtos");
+    expect(CATEGORY_NAMES_PT[15]).toBe("Peptídeos (Brasil)");
   });
 
   it("keeps the original names when the language is english", () => {

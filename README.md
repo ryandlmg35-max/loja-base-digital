@@ -1,16 +1,17 @@
 # Loja Base Digital
 
-## Store clone — "Simply Steroids" (American Pharma)
+## Store clone — "Simply Steroids" (Brazilian Pharma)
 
 Este repositório agora é um clone fiel da vitrine `.onion` `steroid2pmi2vin7vzkaalwreb2y64qtmo5k5paf45txdqxnvmrqbvyd.onion`,
-construído por cima da base Lovable (TanStack Start + Supabase + Drizzle).
+construído por cima da base Lovable (TanStack Start + Supabase + Drizzle) — e uma **loja brasileira**:
+tudo sai do Brasil, os preços são em real e o site é bilíngue (pt-BR / en).
 
 ### O que foi clonado
 
 - **Layout e CSS originais**: Bootstrap 2.3.2, `style.php` (renomeado para `style.css`) e Font Awesome 3.2.1
   em `public/css` + `public/font`. `public/css/clone-fix.css` só neutraliza o preflight do Tailwind v4
   (que existe no template da Lovable) para as imagens inline do cabeçalho/rodapé.
-- **Assets**: logo, banner `header_bg_1.gif`, botões de origem (USA/EU/UK), 71 fotos de produto,
+- **Assets**: logo, banner `header_bg_1.gif`, botão de origem (Brasil), 71 fotos de produto,
   ícones de pagamento (Monero, BTC, ETH, LTC, SOL, DOGE, TRON, XRP, USDT) e foto do vendor em `public/images`.
 - **Catálogo**: 79 produtos, 15 categorias, 3 vendors e 6 blocos de FAQ, extraídos das páginas reais
   (ver `src/data/catalog.ts`).
@@ -19,6 +20,31 @@ construído por cima da base Lovable (TanStack Start + Supabase + Drizzle).
   7 páginas, igual ao original.
 - **Bilíngue (pt-BR + en)**: o site abre em português e tem um seletor de idioma no canto direito da
   navbar (ver "Idiomas" abaixo).
+
+### Loja brasileira: real e envio do Brasil
+
+O clone original falava em dólar e despachava dos EUA/Europa/Reino Unido. Aqui a loja é brasileira:
+
+| o quê | onde está | valor |
+| --- | --- | --- |
+| taxa de conversão e origem do envio | `src/data/store.json` | `usdToBrl: 5.5`, `origin: "Brasil"` |
+| formatação de real e categorias da vitrine | `src/data/store.ts` | `formatBRL()`, `BRAZIL_CATEGORY_IDS` |
+| preços gravados (vitrine **e** banco) | `src/data/catalog.ts` + `seed/catalogo.sql` | já em BRL |
+
+- **Preços em real**: o `extract-catalog.mjs` converte os preços em USD do original uma única vez, na
+  geração do catálogo. O que está no `catalog.ts` e no `seed/catalogo.sql` já é BRL — vitrine e banco
+  falam a mesma língua (a coluna `preco` do banco é em real). Para mudar a taxa: edite
+  `src/data/store.json` e rode `node scripts/extract-catalog.mjs` de novo.
+- **Exibição**: `formatBRL()` devolve `R$ 1.100,00` em pt-BR e `R$ 1,100.00` em en; o carrinho, a página
+  de produto, a vitrine e o recibo do checkout usam sempre esse formatador.
+- **Regras do carrinho em real**: pedido mínimo **R$ 330,00**, frete **R$ 27,50**, frete grátis acima de
+  **R$ 1.100,00**.
+- **Envio do Brasil**: o banner da home mostra "Enviamos do Brasil:" com a bandeira brasileira
+  (`public/images/Brasil-Products-Button-Small.svg`), as categorias do original perderam o sufixo de
+  origem (viraram "(Brasil)") e o FAQ foi reescrito com prazos de entrega a partir do Brasil.
+- **Sem rastro do original**: os 12 produtos que carregavam "(USA)" no nome perderam o sufixo, e as
+  descrições que falavam em "ship domestically" ou no estoque inglês agora falam em Brasil (traduzido
+  nos blocos `.pt-*.json`, com checksum recalculado).
 
 ### Idiomas (pt-BR / en)
 
@@ -103,8 +129,8 @@ confirmar o e-mail (e o SMTP padrão do Lovable não entrega para caixas externa
 
    O botão "Resend confirmation" na tela de login reenvia o e-mail de confirmação.
 
-**Carrinho:** client-side (`localStorage`, chave `steroid-store.cart.v1`), com as mesmas regras de
-pedido mínimo ($ 60) e frete ($ 5, grátis acima de $ 200) do original.
+**Carrinho:** client-side (`localStorage`, chave `steroid-store.cart.v1`), com as regras da loja
+brasileira: pedido mínimo (R$ 330,00) e frete (R$ 27,50, grátis acima de R$ 1.100,00).
 
 ### Checkout e pagamento
 
@@ -164,9 +190,10 @@ O harness de navegador fica em `scripts/e2e-store.mjs` (Playwright + Chromium do
 
 ```sh
 npm i playwright-core
-node scripts/e2e-store.mjs          # 42 checks: home, produto, carrinho, cadastro, login,
+node scripts/e2e-store.mjs          # 49 checks: home, produto, carrinho, cadastro, login,
                                     # persistência, FAQ, toplist, vendor, categorias, admin, 404,
-                                    # troca de idioma (pt-BR -> en -> pt-BR) e persistência do idioma
+                                    # troca de idioma (pt-BR -> en -> pt-BR) e persistência do idioma,
+                                    # além dos checks da loja brasileira (real, envio do Brasil)
 ```
 
 Ele roda contra o dev server (`BASE_URL` para trocar) e salva screenshots + `e2e-report.json` em
@@ -177,8 +204,9 @@ Ele roda contra o dev server (`BASE_URL` para trocar) e salva screenshots + `e2e
 | área | como foi verificada | status |
 | --- | --- | --- |
 | home, paginação, CSS, assets | E2E no Chromium (Bootstrap, 12 cards, pager `1 / 7`, 9 ícones) | ok |
+| loja brasileira (real, envio do Brasil) | E2E (banner "Enviamos do Brasil", botão BR, categorias "(Brasil)", `R$ 148,50` na vitrine) + 4 testes de `store.test.ts` | ok |
 | clique no produto, descrição, imagem | E2E + conferência do HTML SSR com o dump do `.onion` | ok |
-| carrinho, frete, total, badge, persistência | E2E (`$ 54 + $ 5 = $ 59`) + `cartTotals` unit test | ok |
+| carrinho, frete, total, badge, persistência | E2E (`R$ 297 + R$ 27,50 = R$ 324,50`) + `cartTotals` unit test | ok |
 | cadastro | E2E real contra o Supabase (conta criada, trigger `profiles` ok) | ok |
 | login | E2E: senha errada → `Invalid login credentials`; e-mail não confirmado → aviso + botão de reenvio | ok |
 | checkout → `pedidos` + `pedido_itens` | teste de integração com o cliente Supabase mockado (5 casos, incl. rollback) | ok |
@@ -192,7 +220,7 @@ Duas coisas travam a última linha até o Sam mexer no projeto Supabase (2 minut
 1. **E-mail de confirmação:** o projeto está com "Confirm email" ligado e o SMTP padrão do Lovable
    não entrega em caixa externa — ou use `POST /api/register` (resolve sozinho na Lovable Cloud),
    ou desative "Confirm email" no painel de Auth, ou confirme o e-mail com o SQL acima.
-2. **Catálogo no banco:** cole `seed/catalogo.sql` ou use `/admin` → "Sync catalog to database"
+2. **Catálogo no banco:** cole `seed/catalogo.sql` ou use `/admin` → "Sincronizar catálogo com o banco"
    (com a conta em `user_roles` como `admin`).
 
 Sem esses dois passos o checkout ainda grava o cabeçalho do pedido e mostra o aviso das linhas

@@ -22,14 +22,14 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "footer.paymentMethods": "Formas de pagamento",
 
     "site.tagline":
-      "Drogas e medicamentos de alta qualidade. Envio rápido dos EUA, Europa e Reino Unido.",
+      "Anabolizantes e medicamentos de alta qualidade. Envio rápido do Brasil para todo o mundo.",
     "site.description":
-      "Grande seleção. Envio rápido. Worldwide. Anabolizantes, peptides, SARMs, HGH, RAID e muito mais.",
+      "Grande seleção. Envio rápido do Brasil para todo o mundo. Anabolizantes, peptídeos, SARMs, HGH, HCG e muito mais.",
     "site.copyright": "Copyright (c) 2015-2026 Simply Steroids",
 
     "home.allCategories": "Todas as categorias",
-    "home.weShipFrom": "Enviamos de:",
-    "home.shippingProducts": "produtos {{country}}",
+    "home.weShipFrom": "Enviamos do Brasil:",
+    "home.shippingProducts": "produtos enviados do Brasil",
     "home.view": "Ver",
     "home.addToCart": "add to cart",
 
@@ -177,14 +177,14 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "footer.dataPrivacy": "Data privacy",
     "footer.paymentMethods": "Payment Methods",
 
-    "site.tagline": "Highest quality drugs & meds. Fast shipping from USA, Europe and UK.",
+    "site.tagline": "Highest quality drugs & meds. Fast shipping from Brazil to the whole world.",
     "site.description":
-      "Large Selection. Fast Shipping. Worldwide. Anabolic steroids, peptides, SARMS, HGH, RAID and many more.",
+      "Large Selection. Fast Shipping from Brazil. Worldwide. Anabolic steroids, peptides, SARMS, HGH, HCG and many more.",
     "site.copyright": "Copyright (c) 2015-2026 Simply Steroids",
 
     "home.allCategories": "All categories",
-    "home.weShipFrom": "We ship from:",
-    "home.shippingProducts": "{{country}} products",
+    "home.weShipFrom": "We ship from Brazil:",
+    "home.shippingProducts": "products shipped from Brazil",
     "home.view": "View",
     "home.addToCart": "add to cart",
 

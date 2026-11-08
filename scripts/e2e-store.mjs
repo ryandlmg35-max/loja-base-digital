@@ -116,6 +116,29 @@ check(
 const heading = await page.locator(".span9 .well h3").first().innerText();
 check("home: titulo 'Todas as categorias'", /Todas as categorias/.test(heading), heading);
 
+const shippingText = (await page.locator(".mybuttons").innerText()).replace(/\s+/g, " ").trim();
+check(
+  "home: banner de envio fala do Brasil",
+  /Enviamos do Brasil/.test(shippingText),
+  shippingText.slice(0, 120),
+);
+
+const brazilFlagOk = await page.evaluate(() => {
+  const img = document.querySelector(".mybuttons img[src*='Brasil']");
+  return img ? img.complete && img.naturalWidth > 0 : false;
+});
+check("home: botao de envio Brasil carrega", brazilFlagOk);
+
+const sidebarText = (await page.locator("#sidebar").innerText()).replace(/\s+/g, " ").trim();
+check(
+  "home: categorias da loja brasileira (Brasil, sem EUA/Europa)",
+  /Brasil/.test(sidebarText) && !/EUA|USA|Europa|Europa|UK/.test(sidebarText),
+  sidebarText.slice(0, 160),
+);
+
+const homePrices = (await page.locator("ul.thumbnails").first().innerText()).replace(/\s+/g, " ");
+check("home: precos em real (R$ 148,50)", /R\$ 148,50/.test(homePrices), homePrices.slice(0, 160));
+
 await page.screenshot({ path: `${SHOTS}\\01-home.png`, fullPage: false });
 
 // ------------------------------------------------------- 2. CLIQUE NO PRODUTO
@@ -130,8 +153,8 @@ check(
 );
 const productPrice = await page.locator(".qtyFrm h4").first().innerText();
 check(
-  "produto: preco exibido (Preço: $ 27.00)",
-  productPrice.replace(/\s+/g, " ").trim() === "Preço: $ 27.00",
+  "produto: preco exibido em real (Preço: R$ 148,50)",
+  productPrice.replace(/\s+/g, " ").trim() === "Preço: R$ 148,50",
   productPrice,
 );
 const infoText = await page.locator("#home").innerText();
@@ -157,12 +180,16 @@ await page.waitForSelector("table.table-bordered tbody tr");
 const bodyText = (await page.locator(".span12 .well").innerText()).replace(/\s+/g, " ");
 check(
   "carrinho: item listado com 2 unidades",
-  /Masteron/.test(bodyText) && /\$ 54\.00/.test(bodyText),
+  /Masteron/.test(bodyText) && /R\$ 297,00/.test(bodyText),
   bodyText.slice(0, 220),
 );
-check("carrinho: frete $ 5.00 (subtotal < 200)", /\$ 5\.00/.test(bodyText), "");
-check("carrinho: total $ 59.00 (54 + 5)", /\$ 59\.00/.test(bodyText), "");
-check("carrinho: minimo de pedido $ 60 exibido", /pedido mínimo \$ 60/.test(bodyText), "");
+check("carrinho: frete R$ 27,50 (subtotal < 1.100)", /R\$ 27,50/.test(bodyText), "");
+check("carrinho: total R$ 324,50 (297 + 27,50)", /R\$ 324,50/.test(bodyText), "");
+check(
+  "carrinho: minimo de pedido R$ 330,00 exibido",
+  /pedido mínimo R\$ 330,00/.test(bodyText),
+  "",
+);
 check(
   "carrinho: exige login para fechar pedido",
   /Entre ou faça o cadastro para fechar o pedido/.test(bodyText),
@@ -233,7 +260,7 @@ await page.goto(`${BASE}/cart`, { waitUntil: "networkidle" });
 const persisted = (await page.locator(".span12 .well").innerText()).replace(/\s+/g, " ");
 check(
   "carrinho: persiste no localStorage entre paginas",
-  /Masteron/.test(persisted) && /\$ 59\.00/.test(persisted),
+  /Masteron/.test(persisted) && /R\$ 324,50/.test(persisted),
   "",
 );
 
@@ -246,6 +273,16 @@ check(
   "faq: traduzido (Envio / Frete grátis)",
   /Envio/.test(faqText) && /Frete grátis/.test(faqText),
   faqText.slice(0, 160),
+);
+check(
+  "faq: envio do Brasil e precos em real",
+  /enviados do Brasil/.test(faqText) && /R\$ 27,50/.test(faqText) && /R\$ 1\.100,00/.test(faqText),
+  faqText.slice(0, 200),
+);
+check(
+  "faq: sem rastro de envio dos EUA/Reino Unido no texto",
+  !/Estados Unidos|USA|Reino Unido|do EUA/.test(faqText),
+  faqText.slice(0, 200),
 );
 await page.goto(`${BASE}/toplist`, { waitUntil: "networkidle" });
 const toplist = (await page.locator(".well").innerText()).replace(/\s+/g, " ");
@@ -331,9 +368,23 @@ check(
 await page.goto(`${BASE}/product/145`, { waitUntil: "networkidle" });
 const titleEn = await page.locator(".span7 h2").innerText();
 check("idioma: pagina de produto em ingles", /Masteron Propionate/.test(titleEn), titleEn);
+const priceEn = await page.locator(".qtyFrm h4").first().innerText();
+check(
+  "idioma: preco em real no formato ingles (R$ 148.50)",
+  priceEn.replace(/\s+/g, " ").trim() === "Price: R$ 148.50",
+  priceEn,
+);
 const infoEn = await page.locator("#home").innerText();
 check("idioma: descricao longa em ingles", /half life/i.test(infoEn), infoEn.slice(0, 120));
 await page.screenshot({ path: `${SHOTS}\\07-ingles.png`, fullPage: false });
+
+await page.goto(`${BASE}/faq`, { waitUntil: "networkidle" });
+const faqEn = (await page.locator(".span12").innerText()).replace(/\s+/g, " ");
+check(
+  "idioma: FAQ em ingles com envio do Brasil e preco em real",
+  /shipped from Brazil/.test(faqEn) && /R\$ 27\.50/.test(faqEn),
+  faqEn.slice(0, 160),
+);
 
 await page.reload({ waitUntil: "networkidle" });
 const navEnReload = (await page.locator(".topNav").innerText()).replace(/\s+/g, " ").trim();

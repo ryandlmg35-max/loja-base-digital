@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { productName } from "@/i18n/catalog-text";
 import { useLang, useT } from "@/i18n/context";
 import type { Product } from "@/data/catalog";
+import { formatBRL } from "@/data/store";
 import { NO_AUTO_ACTIVE_CLASS } from "./link";
 import { handleImageError } from "./image";
 
@@ -48,7 +49,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
                     <h5>{productName(product, lang)}</h5>
                   </Link>
                   <p>
-                    <strong>${product.price.toFixed(2)}</strong>
+                    <strong>{formatBRL(product.price, lang)}</strong>
                   </p>
                   <h4>
                     <Link

@@ -14,7 +14,7 @@ const PRODUCT = getProduct(145)!;
 
 const order: PlacedOrder = {
   id: "pedido-1",
-  total: 59,
+  total: 324.5,
   createdAt: "2026-11-07T22:00:00.000Z",
   lines: [{ product: PRODUCT, qty: 2, lineTotal: PRODUCT.price * 2 }],
   pendingItems: [],
@@ -27,7 +27,7 @@ describe("PaymentPanel", () => {
     expect(screen.getByText("Order registered")).toBeInTheDocument();
     expect(screen.getByText("pedido-1")).toBeInTheDocument();
     expect(screen.getByText("Pending payment")).toBeInTheDocument();
-    expect(screen.getByText("$ 59.00")).toBeInTheDocument();
+    expect(screen.getByText("R$ 324,50")).toBeInTheDocument();
     expect(screen.getByText(PRODUCT.name)).toBeInTheDocument();
     expect(screen.getByText("2")).toBeInTheDocument();
   });

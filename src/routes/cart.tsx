@@ -8,6 +8,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { productName } from "@/i18n/catalog-text";
 import { useLang, useT } from "@/i18n/context";
 import { SITE } from "@/data/catalog";
+import { formatBRL } from "@/data/store";
 import { supabase } from "@/integrations/supabase/client";
 import { cartTotals, useCart } from "@/lib/cart";
 import { createOrder } from "@/lib/orders";
@@ -23,11 +24,10 @@ export const Route = createFileRoute("/cart")({
   component: CartPage,
 });
 
-const usd = (value: number) => `$ ${value.toFixed(2)}`;
-
 function CartPage() {
   const t = useT();
   const { lang } = useLang();
+  const money = (value: number) => formatBRL(value, lang);
   const { lines, subtotal, count, setQty, remove, clear, hydrated } = useCart();
   const [user, setUser] = useState<User | null>(null);
   const [order, setOrder] = useState<PlacedOrder | null>(null);
@@ -142,7 +142,7 @@ function CartPage() {
                         {productName(line.product, lang)}
                       </Link>
                     </td>
-                    <td>{usd(line.product.price)}</td>
+                    <td>{money(line.product.price)}</td>
                     <td>
                       <input
                         type="number"
@@ -156,7 +156,7 @@ function CartPage() {
                         style={{ width: 60 }}
                       />
                     </td>
-                    <td>{usd(line.lineTotal)}</td>
+                    <td>{money(line.lineTotal)}</td>
                     <td>
                       <a
                         href="#"
@@ -173,25 +173,27 @@ function CartPage() {
                 <tr>
                   <td colSpan={4} className="alignR">
                     {t("cart.totalOfProducts")}{" "}
-                    <small>{t("cart.minOrder", { value: usd(SITE.minOrder) })}</small>
+                    <small>{t("cart.minOrder", { value: money(SITE.minOrder) })}</small>
                   </td>
-                  <td>{usd(subtotal)}</td>
+                  <td>{money(subtotal)}</td>
                   <td />
                 </tr>
                 <tr>
                   <td colSpan={4} className="alignR">
                     {t("cart.referralBonus")}
                   </td>
-                  <td>{usd(SITE.referralBonus)}</td>
+                  <td>{money(SITE.referralBonus)}</td>
                   <td />
                 </tr>
                 <tr>
                   <td colSpan={4} className="alignR">
                     {t("cart.shipping")}{" "}
-                    <small>{t("cart.freeShippingAt", { value: usd(SITE.freeShippingFrom) })}</small>
+                    <small>
+                      {t("cart.freeShippingAt", { value: money(SITE.freeShippingFrom) })}
+                    </small>
                     :
                   </td>
-                  <td>{usd(shippingCost)}</td>
+                  <td>{money(shippingCost)}</td>
                   <td />
                 </tr>
                 <tr>
@@ -199,7 +201,7 @@ function CartPage() {
                     <b>{t("cart.grandTotal")}</b>
                   </td>
                   <td>
-                    <b>{usd(total)}</b>
+                    <b>{money(total)}</b>
                   </td>
                   <td />
                 </tr>

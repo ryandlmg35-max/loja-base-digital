@@ -16,10 +16,10 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: `InÃ­cio - Todas as categorias - ${SITE.name}` },
+      { title: `Início - Todas as categorias - ${SITE.name}` },
       { name: "description", content: SITE.description },
       { name: "keywords", content: SITE.keywords },
-      { property: "og:title", content: `${SITE.name} - American Pharma` },
+      { property: "og:title", content: `${SITE.name} - Brazilian Pharma` },
       { property: "og:description", content: SITE.tagline },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

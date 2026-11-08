@@ -3,11 +3,26 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 import { join } from "node:path";
 import { format, resolveConfig } from "prettier";
 
+// A loja brasileira reescreve as menções de origem do original: a garantia de
+// "envio apenas doméstico" e o bundle do estoque inglês passam a ser Brasil.
+const INFO_REWRITES = [
+  [
+    /We provide the best quality stealth on all our products even though we only ship domestically and never through international borders\./g,
+    "We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.",
+  ],
+  [/if you['’]re in the UK/gi, "if you're in Brazil"],
+];
+
 const REPO = join(import.meta.dirname, "..");
 const DUMP = process.env["ONION_DUMP"] ?? join(REPO, "..", "steroid-clone", "dump");
 const PAGES = join(DUMP, "pages");
 const OUT_DIR = join(REPO, "src", "data");
 mkdirSync(OUT_DIR, { recursive: true });
+
+// Configuração da loja brasileira: a taxa vive em src/data/store.json e é lida
+// por aqui e pelo app, então nunca saem de sincronia.
+const STORE = JSON.parse(readFileSync(join(OUT_DIR, "store.json"), "utf8"));
+const toBRL = (usd) => Math.round(usd * STORE.usdToBrl * 100) / 100;
 
 const PRETTIER_CONFIG = (await resolveConfig(join(OUT_DIR, "catalog.ts"))) ?? {};
 
@@ -63,9 +78,12 @@ for (const f of files) {
   const html = readFileSync(join(PAGES, f), "utf8");
   if (/Product not found/i.test(html)) continue;
 
-  const name = stripTags(
+  const rawName = stripTags(
     html.match(/<div class="span7">[\s\S]*?<h2>([\s\S]*?)<\/h2>/)?.[1] ?? "",
   ).trim();
+  // O original marcava os líquidos com "(USA)": a loja brasileira despacha tudo
+  // do Brasil, então o sufixo de origem sai do nome.
+  const name = rawName.replace(/\s*\((?:USA|EU|UK)\)\s*$/i, "").trim();
   if (!name) continue;
 
   const price = Number(
@@ -86,6 +104,10 @@ for (const f of files) {
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "")
     .trim();
+  const infoBr = INFO_REWRITES.reduce(
+    (text, [pattern, replacement]) => text.replace(pattern, replacement),
+    info,
+  );
 
   products.push({
     id,
@@ -97,7 +119,7 @@ for (const f of files) {
     vendorId: vendor ? Number(vendor[1]) : 0,
     vendorName: vendor ? vendor[2].trim() : "",
     image,
-    info,
+    info: infoBr,
   });
 }
 products.sort((a, b) => a.id - b.id);
@@ -121,26 +143,31 @@ for (let p = 1; p <= 7; p++) {
 for (const prod of products) {
   if (listingPrice.has(prod.id)) prod.price = listingPrice.get(prod.id);
 }
+// A loja brasileira cobra em real: os preços do original (USD) são convertidos
+// uma vez, aqui, e é esse valor que vai para a vitrine e para o seed SQL.
+for (const prod of products) {
+  prod.price = toBRL(prod.price);
+}
 const sorted = [...products].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 if (order.length) ((products.length = 0), products.push(...sorted));
 
 // -------------------------------------------------------------- categories
 const CATEGORY_NAMES = [
   [0, "All products"],
-  [1, "Grape seed oil (USA)"],
-  [2, "HGH/HCG Products (USA)"],
-  [3, "MCT oil (USA)"],
-  [4, "Oral Products (USA)"],
-  [5, "Peptides (USA)"],
+  [1, "Grape seed oil (Brazil)"],
+  [2, "HGH/HCG Products (Brazil)"],
+  [3, "MCT oil (Brazil)"],
+  [4, "Oral Products (Brazil)"],
+  [5, "Peptides (Brazil)"],
   [6, "Full Stacks"],
-  [8, "Grape seed oil (EU)"],
-  [9, "MCT oil (EU)"],
-  [10, "Oral Products (EU)"],
-  [11, "Grape seed oil (UK)"],
-  [12, "HGH/HCG Products (UK)"],
-  [13, "MCT oil (UK)"],
-  [14, "Oral Products (UK)"],
-  [15, "Peptides (UK)"],
+  [8, "Grape seed oil (Brazil)"],
+  [9, "MCT oil (Brazil)"],
+  [10, "Oral Products (Brazil)"],
+  [11, "Grape seed oil (Brazil)"],
+  [12, "HGH/HCG Products (Brazil)"],
+  [13, "MCT oil (Brazil)"],
+  [14, "Oral Products (Brazil)"],
+  [15, "Peptides (Brazil)"],
 ];
 const categories = CATEGORY_NAMES.map(([id, name]) => ({ id, name, productIds: [] }));
 const catById = new Map(categories.map((c) => [c.id, c]));
@@ -233,14 +260,16 @@ while ((m = faqRe.exec(faqHtml))) {
 // ------------------------------------------------------------------- output
 const SITE = {
   name: "Simply Steroids",
-  tagline: "Highest quality drugs & meds. Fast shipping from USA, Europe and UK.",
+  tagline:
+    "Anabolizantes e medicamentos de alta qualidade. Envio rápido do Brasil para todo o mundo.",
   description:
-    "Large Selection. Fast Shipping. Worldwide. LSD, Fentanyl, Heroin, MDMA, Ecstasy, Cannabis, Weed, Hashish, Pills and many more.",
-  keywords: "LSD, Fentanyl, Heroin, MDMA, Ecstasy, Cannabis, Weed, Hashish, Pills",
+    "Grande seleção. Envio rápido do Brasil para todo o mundo. Anabolizantes, peptídeos, SARMs, HGH, HCG e muito mais.",
+  keywords:
+    "anabolizantes, esteroides, peptídeos, SARMs, HGH, HCG, steroids brasil, envio do brasil, steroids brasil",
   copyright: "Copyright (c) 2015-2026 Simply Steroids",
-  shippingCost: 5,
-  freeShippingFrom: 200,
-  minOrder: 60,
+  shippingCost: toBRL(5),
+  freeShippingFrom: toBRL(200),
+  minOrder: toBRL(60),
   pageSize: 12,
   referralBonus: 0,
 };
@@ -259,6 +288,9 @@ const paymentIcons = [
 
 const ts = `// AUTO-GENERATED by scripts/extract-catalog.mjs — do not edit by hand.
 // Snapshot of the Simply Steroids storefront: ${products.length} products, ${categories.length} categories.
+// Prices are stored in BRL (the original USD values converted at ${STORE.usdToBrl}), so the database
+// and the storefront always speak the same currency. FAQ_SECTIONS keeps the original English
+// snapshot — the storefront renders the Brazilian FAQ from src/i18n/catalog-text.ts.
 
 export type Product = {
   id: number;
@@ -305,9 +337,7 @@ export const SITE = ${JSON.stringify(SITE, null, 2)} as const;
 export const PAYMENT_ICONS: ReadonlyArray<readonly [string, string]> = ${JSON.stringify(paymentIcons)};
 
 export const SHIPPING_BUTTONS: ReadonlyArray<readonly [string, string]> = [
-  ["USA", "USA-Products-Button-Small.jpg"],
-  ["EU", "EU-Products-Button-Small.jpg"],
-  ["UK", "UK-Products-Button-Small.jpg"],
+  ["BRASIL", ${JSON.stringify(STORE.shippingButton)}],
 ];
 
 export const CATEGORIES: Category[] = ${JSON.stringify(categories, null, 2)};
@@ -392,9 +422,10 @@ const seedRows = products.map((product) => {
   return `  (${sqlEscape(product.name)}, ${sqlEscape(description)}, ${product.price.toFixed(2)}, ${sqlEscape(product.image)}, 100)`;
 });
 
-const seedSql = `-- Catalog seed for the cloned store.
+const seedSql = `-- Catalog seed for the Brazilian store.
 -- Paste this into the Lovable SQL editor (Database -> SQL) or the Supabase SQL editor.
 -- It is idempotent: existing rows with the same product name are replaced.
+-- The preco column is in BRL (R$), the same currency the storefront shows.
 --
 -- products: id, nome, descricao, preco, imagem_url, estoque, criado_em
 
@@ -402,6 +433,11 @@ delete from public.produtos
 where nome in (
 ${products.map((product) => `  ${sqlEscape(product.name)}`).join(",\n")}
 );
+
+-- Limpa os nomes antigos do clone original, que carregavam o sufixo de origem
+-- (USA/EU/UK) e apontam para produtos que a loja brasileira nao vende mais.
+delete from public.produtos
+where nome ~ '\\((USA|EU|UK)\\)$';
 
 insert into public.produtos (nome, descricao, preco, imagem_url, estoque) values
 ${seedRows.join(",\n")};
@@ -414,7 +450,7 @@ console.log(
 );
 for (const p of products.slice(0, 5)) {
   console.log(
-    `#${p.id} ${p.name} | $${p.price} | ${p.image} | vendor=${p.vendorName} | stock=${p.stock}`,
+    `#${p.id} ${p.name} | R$ ${p.price.toFixed(2)} | ${p.image} | vendor=${p.vendorName} | stock=${p.stock}`,
   );
 }
 console.log("out:", join(OUT_DIR, "catalog.ts"));

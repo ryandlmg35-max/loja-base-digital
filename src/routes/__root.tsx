@@ -84,16 +84,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Simply Steroids: 🧪 ⚗️ 💊 American Pharma" },
+      { title: "Simply Steroids: 🧪 ⚗️ 💊 Brazilian Pharma" },
       {
         name: "description",
         content:
-          "Large Selection. Fast Shipping. Worldwide. LSD, Fentanyl, Heroin, MDMA, Ecstasy, Cannabis, Weed, Hashish, Pills and many more.",
+          "Grande seleção. Envio rápido do Brasil para todo o mundo. Anabolizantes, peptídeos, SARMs, HGH, HCG e muito mais.",
       },
-      { property: "og:title", content: "Simply Steroids: 🧪 ⚗️ 💊 American Pharma" },
+      { property: "og:title", content: "Simply Steroids: 🧪 ⚗️ 💊 Brazilian Pharma" },
       {
         property: "og:description",
-        content: "Highest quality drugs & meds. Fast shipping from USA, Europe and UK.",
+        content:
+          "Anabolizantes e medicamentos de alta qualidade. Envio rápido do Brasil para todo o mundo.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

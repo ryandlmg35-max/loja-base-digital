@@ -1,5 +1,6 @@
 import { useT } from "@/i18n/context";
 import { SHIPPING_BUTTONS } from "@/data/catalog";
+import { SHIPPING_ORIGIN } from "@/data/store";
 
 export function ShippingButtons() {
   const t = useT();
@@ -12,8 +13,8 @@ export function ShippingButtons() {
           key={label}
           style={{ marginLeft: 15, marginBottom: 25 }}
           src={`/images/${file}`}
-          alt={label}
-          title={t("home.shippingProducts", { country: label })}
+          alt={SHIPPING_ORIGIN}
+          title={t("home.shippingProducts")}
         />
       ))}
     </div>

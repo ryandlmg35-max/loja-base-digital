@@ -1,6 +1,7 @@
--- Catalog seed for the cloned store.
+-- Catalog seed for the Brazilian store.
 -- Paste this into the Lovable SQL editor (Database -> SQL) or the Supabase SQL editor.
 -- It is idempotent: existing rows with the same product name are replaced.
+-- The preco column is in BRL (R$), the same currency the storefront shows.
 --
 -- products: id, nome, descricao, preco, imagem_url, estoque, criado_em
 
@@ -11,7 +12,7 @@ where nome in (
   'Primobolan Enanthate 100mg/ml – 10ml Vial',
   'MCT – Test 400 – 400mg/ml – 10ml Vial',
   'Sildenafil (Viagra) 20mg x 25 Capsules',
-  'Arimidex 0.5mg/ml x 30ml Liquid Drops (USA)',
+  'Arimidex 0.5mg/ml x 30ml Liquid Drops',
   'Clomid 50mg x 30 Capsules',
   'MCT – NPP 100mg/ml – 10ml Vial',
   'HGH 100iu kit – (10 vials x 10iu)',
@@ -21,17 +22,17 @@ where nome in (
   'Anadrol 50mg x 50 Capsules',
   'Equipoise (Boldenone) – 250mg/ml – 10ml Vial',
   'Tirzepatide – 5mg Vial',
-  'Dianabol 20mg/ml x 30ml Liquid Drops (USA)',
+  'Dianabol 20mg/ml x 30ml Liquid Drops',
   'NPP 100mg/ml – 10ml Vial',
   'HGH 10iu Vial',
   'Retatrutide – 5mg Vial',
-  'Nolvadex (Tamoxifen) 20mg/ml x 30ml Liquid Drops (USA)',
+  'Nolvadex (Tamoxifen) 20mg/ml x 30ml Liquid Drops',
   'Testosterone Propionate 100mg/ml – 10ml Vial',
   'MCT – Equipoise (Boldenone) 250mg/ml – 10ml Vial',
   'BPC 157 – 5mg Vial',
   'HCG 50,000iu kit – (10 vials x 5,000iu)',
   'MCT – Masteron Enanthate 200mg/ml – 10ml Vial',
-  'Winstrol (Stanozolol) 20mg/ml x 30ml Liquid Drops (USA)',
+  'Winstrol (Stanozolol) 20mg/ml x 30ml Liquid Drops',
   'Masteron Propionate 100mg/ml – 10ml Vial',
   'Aromasin 25mg x 30 Capsules – USA',
   'Ipamorelin – 5mg Vial',
@@ -44,27 +45,27 @@ where nome in (
   'CJC-1295 (No DAC) – 2mg Vial',
   'Melanotan 2 – 10mg Vial',
   'CJC-1295 (With DAC) – 2mg Vial',
-  'Clomid 50mg/ml x 30ml Liquid Drops (USA)',
+  'Clomid 50mg/ml x 30ml Liquid Drops',
   'Trenbolone Acetate 200mg/ml – 10ml Vial',
   'HGH 12iu Vial',
   'TTM 300mg/ml – 10ml Vial',
   'MCT – Trenbolone Enanthate 200mg/ml – 10ml Vial',
-  'Superdrol 20mg/ml x 30ml Liquid Drops (USA)',
-  'Aromasin 25mg/ml x 30ml Liquid Drops (USA)',
+  'Superdrol 20mg/ml x 30ml Liquid Drops',
+  'Aromasin 25mg/ml x 30ml Liquid Drops',
   'MCT – Trenbolone Acetate 200mg/ml – 10ml Vial',
-  'Anadrol 50mg/ml x 30ml Liquid Drops (USA)',
-  'Proviron 25mg/ml x 30ml Liquid Drops (USA)',
+  'Anadrol 50mg/ml x 30ml Liquid Drops',
+  'Proviron 25mg/ml x 30ml Liquid Drops',
   'Bulking Stack',
   '(MCT) TTM 300mg/ml – 10ml Vial',
   'Cialis 20mg x 25 Capsules',
   'Masteron Enanthate 100mg/ml – 10ml Vial',
   'Nolvadex (Tamoxifen) 25mg x 50 Capsules',
-  'Cialis 20mg/ml x 30ml Liquid Drops (USA)',
+  'Cialis 20mg/ml x 30ml Liquid Drops',
   'MCT – Primobolan Enanthate 100mg/ml – 10ml Vial',
   'Anavar 10mg x 50 Capsules',
   'MCT – Trenbolone Enanthate 100mg/ml – 10ml Vial',
   'Dianabol 10mg x 100 Capsules',
-  'Anavar 20mg/ml x 30ml Liquid Drops (USA)',
+  'Anavar 20mg/ml x 30ml Liquid Drops',
   'MCT – Masteron Enanthate 100mg/ml – 10ml Vial',
   'Trenbolone Acetate 100mg/ml – 10ml Vial',
   'Trenbolone Enanthate 100mg/ml – 10ml Vial',
@@ -77,7 +78,7 @@ where nome in (
   'MCT – Trenbolone Acetate 100mg/ml – 10ml Vial',
   'Anavar 25mg x 30 Capsules – USA',
   'Semaglutide – 5mg Vial',
-  'Cialis 20mg/ml x 30ml Liquid Drops (USA)',
+  'Cialis 20mg/ml x 30ml Liquid Drops',
   'Anavar 10mg x 50 Capsules',
   'Dianabol 10mg x 100 Capsules',
   'Nolvadex (Tamoxifen) 25mg x 50 Capsules',
@@ -86,6 +87,11 @@ where nome in (
   'MCT – Primobolan Enanthate 100mg/ml – 10ml Vial',
   'MCT – Testosterone Cypionate 250mg/ml – 10ml Vial'
 );
+
+-- Limpa os nomes antigos do clone original, que carregavam o sufixo de origem
+-- (USA/EU/UK) e apontam para produtos que a loja brasileira nao vende mais.
+delete from public.produtos
+where nome ~ '\((USA|EU|UK)\)$';
 
 insert into public.produtos (nome, descricao, preco, imagem_url, estoque) values
   ('MCT – Masteron Propionate 100mg/ml – 10ml Vial', 'The resulting half life is about 2.5 days, which is much shorter than the enanthate variety. Propionate is the most popular variant of Masteron. Being a shorter ester, this version of Masteron is mostly used in shorter cycles than what you would use the enanthate variant for.
@@ -130,7 +136,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 27.00, '/images/products/MP-MCT-scaled.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 148.50, '/images/products/MP-MCT-scaled.jpg', 100),
   ('Winstrol (Stanozolol) 25mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -151,7 +157,7 @@ Due to its versatility, Winstrol is thought to be the second most popular oral s
 
 
 
-That’s no mean feat, considering the popularity of Anavar, a rival cutting steroid.', 25.00, '/images/products/Win-caps.jpg', 100),
+That’s no mean feat, considering the popularity of Anavar, a rival cutting steroid.', 137.50, '/images/products/Win-caps.jpg', 100),
   ('Primobolan Enanthate 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -208,7 +214,7 @@ Intermediate users can increase the weekly dosage to 700mg, with advanced Primob
 
 
 
-Splitting the dosage into a twice weekly injection is the standard procedure and this will ensure your blood levels of Primobolan remain at the optimal level.', 40.00, '/images/products/Primo-E-GSO-scaled.jpg', 100),
+Splitting the dosage into a twice weekly injection is the standard procedure and this will ensure your blood levels of Primobolan remain at the optimal level.', 220.00, '/images/products/Primo-E-GSO-scaled.jpg', 100),
   ('MCT – Test 400 – 400mg/ml – 10ml Vial', 'Our Test 400 is a blend of three different testosterones:
 
 
@@ -233,7 +239,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 32.00, '/images/products/T400-MCT-scaled.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 176.00, '/images/products/T400-MCT-scaled.jpg', 100),
   ('Sildenafil (Viagra) 20mg x 25 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -280,8 +286,8 @@ Usually taken 1 hour before sexual intercourse. Alternatively, the medicine may 
 
 
 
--Adults 65 years of age and older — 25mg as a single dose and no more than once a day.', 22.00, '/images/products/Silden-caps.jpg', 100),
-  ('Arimidex 0.5mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+-Adults 65 years of age and older — 25mg as a single dose and no more than once a day.', 121.00, '/images/products/Silden-caps.jpg', 100),
+  ('Arimidex 0.5mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -313,7 +319,7 @@ While it has some function for helping stimulate the production of testosterone,
 
 
 
-While everyone reacts differently to different drugs, and your post-cycle therapy will also depend on the type of steroid cycle you were on, some may wish to include Arimidex. A dosage of 0.5mg to 1mg daily during the post-cycle therapy cycle is sufficient in these cases.', 25.00, '/images/products/Arimi-drops.jpg', 100),
+While everyone reacts differently to different drugs, and your post-cycle therapy will also depend on the type of steroid cycle you were on, some may wish to include Arimidex. A dosage of 0.5mg to 1mg daily during the post-cycle therapy cycle is sufficient in these cases.', 137.50, '/images/products/Arimi-drops.jpg', 100),
   ('Clomid 50mg x 30 Capsules', 'Clomid (Clomiphene Citrate) is in the class of drugs called Selective Estrogen Receptor Modulators (SERM). It has anti-estrogen effects and was originally developed as a fertility medication for women who do not ovulate normally.
 
 
@@ -342,7 +348,7 @@ Usually, this level of dosage will run for up to two weeks, but it depends on yo
 
 
 
-As Clomid was originally developed as a fertility aid for women, the dosage for this purpose is generally set at 50mg per day, with the occasional increase to 100mg for some women.', 25.00, '/images/products/Clomid.jpg', 100),
+As Clomid was originally developed as a fertility aid for women, the dosage for this purpose is generally set at 50mg per day, with the occasional increase to 100mg for some women.', 137.50, '/images/products/Clomid.jpg', 100),
   ('MCT – NPP 100mg/ml – 10ml Vial', 'Made using MCT oil instead of grape seed oil as the carrier oil.
 
 
@@ -387,11 +393,11 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 22.00, '/images/products/NPP-MCT-onion-scaled.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 121.00, '/images/products/NPP-MCT-onion-scaled.jpg', 100),
   ('HGH 100iu kit – (10 vials x 10iu)', 'You will receive 10x HGH vials (100iu Total).
 
 
@@ -408,7 +414,7 @@ HGH cycles usually last anywhere from 6 to 24 weeks, with 16 weeks being the ave
 
 
 
-HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 140.00, '/images/products/HGH-530x444.jpg', 100),
+HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 770.00, '/images/products/HGH-530x444.jpg', 100),
   ('MCT – Sustanon 250mg/ml – 10ml Vial', 'For a potent combination Sustanon 250 and Trenbolone is the best!
 
 
@@ -457,11 +463,11 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 26.00, '/images/products/Sus.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 143.00, '/images/products/Sus.jpg', 100),
   ('Sustanon 250mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -502,11 +508,11 @@ These are just two examples of the countless stacks you can put together with Su
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 25.00, '/images/products/Sus-GSO-scaled.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 137.50, '/images/products/Sus-GSO-scaled.jpg', 100),
   ('Superdrol 10mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -569,7 +575,7 @@ Superdrol dosages should be spaced out throughout the day, as Superdrol is very 
 
 
 
-We find that taking a full day’s dose in one sitting is likely to cause fewer gains and harsher side effects, as testosterone levels will become less stable (with peaks and troughs).', 25.00, '/images/products/SuperD-caps.jpg', 100),
+We find that taking a full day’s dose in one sitting is likely to cause fewer gains and harsher side effects, as testosterone levels will become less stable (with peaks and troughs).', 137.50, '/images/products/SuperD-caps.jpg', 100),
   ('Anadrol 50mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -596,7 +602,7 @@ Most Anadrol tablets come in 50mg dosages, making it convenient to consume the o
 
 
 
-More is not necessarily better when comes to Anadrol. Studies have shown that you can hit peak gains with a dosage of around 100mg daily, with gains falling after this amount while side effects increase.', 25.00, '/images/products/Anadrol-caps.jpg', 100),
+More is not necessarily better when comes to Anadrol. Studies have shown that you can hit peak gains with a dosage of around 100mg daily, with gains falling after this amount while side effects increase.', 137.50, '/images/products/Anadrol-caps.jpg', 100),
   ('Equipoise (Boldenone) – 250mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -613,7 +619,7 @@ While not a very powerful muscle gainer compared to other steroids like testoste
 
 
 
-Possibly the most valued aspect of EQ is its ability to help retain lean tissue while you’re in a cutting cycle. Additionally Equipoise can contribute to improving body conditioning while cutting and this is enhanced when you use this steroid with other steroids that do not aromatize, with compounds like Masteron being a particularly effective cutting combination with Equipoise.', 25.00, '/images/products/EQ-GSO-scaled.jpg', 100),
+Possibly the most valued aspect of EQ is its ability to help retain lean tissue while you’re in a cutting cycle. Additionally Equipoise can contribute to improving body conditioning while cutting and this is enhanced when you use this steroid with other steroids that do not aromatize, with compounds like Masteron being a particularly effective cutting combination with Equipoise.', 137.50, '/images/products/EQ-GSO-scaled.jpg', 100),
   ('Tirzepatide – 5mg Vial', '— Best price for genuine Tirzepatide on the market! — ✅
 
 
@@ -656,8 +662,8 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration.
 
-9- Withdraw the desired dose of Tizepatide using a new syringe and store the vial in a refridgerator.', 40.00, '/images/products/Tirzepatide-5mg.jpg', 100),
-  ('Dianabol 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+9- Withdraw the desired dose of Tizepatide using a new syringe and store the vial in a refridgerator.', 220.00, '/images/products/Tirzepatide-5mg.jpg', 100),
+  ('Dianabol 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -685,7 +691,7 @@ Users have reported 30 lbs of weight gain on a dose of 50mg per day over 30 days
 
 
 
-We find that most of this weight will be in the form of muscle mass; however, some temporary water retention will occur, making up roughly 10-15% of the total weight.', 25.00, '/images/products/Dbol-drops.jpg', 100),
+We find that most of this weight will be in the form of muscle mass; however, some temporary water retention will occur, making up roughly 10-15% of the total weight.', 137.50, '/images/products/Dbol-drops.jpg', 100),
   ('NPP 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -712,7 +718,7 @@ For guys using NPP for bodybuilding a dosage of up to 400mg weekly is ideal. Thi
 
 
 
-NPP is not an extremely fast acting steroid so cycle length should provide enough time to really see the benefits that this highly effect compound can deliver. Up to 12 weeks is recommended. The frequency of injections should be three per week, where the weekly dose is split evenly between injections. A three weekly injection routine ensures that blood levels of this steroid are evenly maintained throughout the cycle.', 20.00, '/images/products/NPP-GSO-onion-scaled.jpg', 100),
+NPP is not an extremely fast acting steroid so cycle length should provide enough time to really see the benefits that this highly effect compound can deliver. Up to 12 weeks is recommended. The frequency of injections should be three per week, where the weekly dose is split evenly between injections. A three weekly injection routine ensures that blood levels of this steroid are evenly maintained throughout the cycle.', 110.00, '/images/products/NPP-GSO-onion-scaled.jpg', 100),
   ('HGH 10iu Vial', 'Human Growth Hormone will promote muscle building while also helping your body burn fat, it also has anti-aging properties due to HGH stimulating collagen synthesis.
 
 
@@ -725,7 +731,7 @@ HGH cycles usually last anywhere from 6 to 24 weeks, with 16 weeks being the ave
 
 
 
-HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 25.00, '/images/products/zHGH-2-scaled.jpg', 100),
+HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 137.50, '/images/products/zHGH-2-scaled.jpg', 100),
   ('Retatrutide – 5mg Vial', '✅ — Best price for genuine Retatrutide on the market! — ✅
 
 
@@ -778,8 +784,8 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration.
 
-9- Withdraw the desired dose of Retatrutide using a new syringe and store the vial in a refridgerator.', 60.00, '/images/products/Retatrutide-1.jpg', 100),
-  ('Nolvadex (Tamoxifen) 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+9- Withdraw the desired dose of Retatrutide using a new syringe and store the vial in a refridgerator.', 330.00, '/images/products/Retatrutide-1.jpg', 100),
+  ('Nolvadex (Tamoxifen) 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -801,7 +807,7 @@ The general Nolvadex range is between 10 mg to 50 mg per day. However, Nolvadex 
 
 
 
-The ideal PCT cycle is for three weeks, and the user can consume this dose for 21 days. Note that never take a high dose or perform a long cycle because it may cause various side effects.', 25.00, '/images/products/Nol-drops.jpg', 100),
+The ideal PCT cycle is for three weeks, and the user can consume this dose for 21 days. Note that never take a high dose or perform a long cycle because it may cause various side effects.', 137.50, '/images/products/Nol-drops.jpg', 100),
   ('Testosterone Propionate 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -872,11 +878,11 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 20.00, '/images/products/TP-GSO-scaled.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 110.00, '/images/products/TP-GSO-scaled.jpg', 100),
   ('MCT – Equipoise (Boldenone) 250mg/ml – 10ml Vial', 'Equipoise (Boldenone Undecylenate) is an anabolic steroid that is based on the testosterone hormone with only a slight variation to the chemical structure, but one that it makes unique in its own right.
 
 
@@ -901,7 +907,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 27.00, '/images/products/EQ.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 148.50, '/images/products/EQ.jpg', 100),
   ('BPC 157 – 5mg Vial', 'We’ve partnered with a lab that specializes in Peptides and SARMS. They’ve got some amazing products which I know you guys will love!
 
 If you order both Steroids and SARMS/Peptides, expect two different packages, however at no extra shipping cost.
@@ -968,7 +974,7 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration. If present, do not use the solution.
 
-9- Withdraw the desired dose of BPC-157 using a new syringe.', 40.00, '/images/products/BPC-157-1.jpg', 100),
+9- Withdraw the desired dose of BPC-157 using a new syringe.', 220.00, '/images/products/BPC-157-1.jpg', 100),
   ('HCG 50,000iu kit – (10 vials x 5,000iu)', 'You will receive 10x HCG vials (50,000iu Total).
 
 
@@ -985,7 +991,7 @@ For the purpose of on cycle use, standard male HCG doses will normally be 250-35
 
 
 
-For the purpose of PCT, male HCG doses can start as low as 500iu and go as high as 4,000iu. A long standing PCT practice, the individual will administer 1,500-4,000iu every 3-4 days for approximately 2-3 weeks. Once HCG use is completed the use of Selective Estrogen Receptor Modulators (SERM’s) begins.', 145.00, '/images/products/zHCG-2-scaled.jpg', 100),
+For the purpose of PCT, male HCG doses can start as low as 500iu and go as high as 4,000iu. A long standing PCT practice, the individual will administer 1,500-4,000iu every 3-4 days for approximately 2-3 weeks. Once HCG use is completed the use of Selective Estrogen Receptor Modulators (SERM’s) begins.', 797.50, '/images/products/zHCG-2-scaled.jpg', 100),
   ('MCT – Masteron Enanthate 200mg/ml – 10ml Vial', 'The added Enanthate ester gives this version of Masteron a significantly longer half life of about 10 days.
 
 
@@ -1028,8 +1034,8 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 47.00, '/images/products/Mast-E.jpg', 100),
-  ('Winstrol (Stanozolol) 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 258.50, '/images/products/Mast-E.jpg', 100),
+  ('Winstrol (Stanozolol) 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -1049,7 +1055,7 @@ Due to its versatility, Winstrol is thought to be the second most popular oral s
 
 
 
-That’s no mean feat, considering the popularity of Anavar, a rival cutting steroid.', 25.00, '/images/products/Win-drops2.jpg', 100),
+That’s no mean feat, considering the popularity of Anavar, a rival cutting steroid.', 137.50, '/images/products/Win-drops2.jpg', 100),
   ('Masteron Propionate 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -1084,7 +1090,7 @@ For the vast majority of users the dosage of Masteron will be kept at a low leve
 
 
 
-Beginners are unlikely to want to go any lower than a 200mg weekly dose of Masteron for physique enhancement so this is considered a good starting point if its your first time using this compound.', 25.00, '/images/products/MP-GSO-scaled.jpg', 100),
+Beginners are unlikely to want to go any lower than a 200mg weekly dose of Masteron for physique enhancement so this is considered a good starting point if its your first time using this compound.', 137.50, '/images/products/MP-GSO-scaled.jpg', 100),
   ('Aromasin 25mg x 30 Capsules – USA', 'Aromasin was approved by the FDA in 1999 and was originally approved for usage in 2000. It’s used to treat both early and advanced breast cancer. This medication is an aromatase inhibitor. Aromasin is also known as Exemestane
 
 
@@ -1095,7 +1101,7 @@ Some studies suggest that it may also help people avoid kidney stones, but furth
 
 
 
-Aromasin users can anticipate to observe a significant decrease in estrogen levels in their bodies. This is due to the aromatase enzyme being inhibited. This is the enzyme in the body that converts testosterone to estrogen.', 25.00, '/images/products/Aromas.jpg', 100),
+Aromasin users can anticipate to observe a significant decrease in estrogen levels in their bodies. This is due to the aromatase enzyme being inhibited. This is the enzyme in the body that converts testosterone to estrogen.', 137.50, '/images/products/Aromas.jpg', 100),
   ('Ipamorelin – 5mg Vial', 'We’ve partnered with a lab that specializes in Peptides and SARMS. They’ve got some amazing products which I know you guys will love!
 
 If you order both Steroids and SARMS/Peptides, expect two different packages, however at no extra shipping cost.
@@ -1134,7 +1140,7 @@ Ipamorelin Peptide, the powerhouse in the realm of growth hormone-releasing pept
 
 By mimicking ghrelin, ipamorelin selectively binds the same GHSR-1a receptor as GHRP-2, GHRP-6, and ibutamoren.
 
-Ghrelin, is a naturally produced hormone, by the enteroendocrine cells of the gastrointestinal tract, mainly the stomach. It binds to the growth hormone secretagogue receptor (GHS-R1a).', 25.00, '/images/products/Ipamorelin.jpg', 100),
+Ghrelin, is a naturally produced hormone, by the enteroendocrine cells of the gastrointestinal tract, mainly the stomach. It binds to the growth hormone secretagogue receptor (GHS-R1a).', 137.50, '/images/products/Ipamorelin.jpg', 100),
   ('TB-500 – 5mg Vial', 'We’ve partnered with a lab that specializes in Peptides and SARMS. They’ve got some amazing products which I know you guys will love!
 
 If you order both Steroids and SARMS/Peptides, expect two different packages, however at no extra shipping cost.
@@ -1189,7 +1195,7 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration. If present, do not use the solution.
 
-9- Withdraw the desired dose of TB-500 using a new syringe.', 35.00, '/images/products/TB-500.jpg', 100),
+9- Withdraw the desired dose of TB-500 using a new syringe.', 192.50, '/images/products/TB-500.jpg', 100),
   ('MCT – Testosterone Propionate 100mg/ml – 10ml Vial', 'Made with MCT oil instead of grape seed oil.
 
 
@@ -1260,11 +1266,11 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 22.00, '/images/products/TP.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 121.00, '/images/products/TP.jpg', 100),
   ('Masteron Enanthate 200mg/ml – 10ml Vial', '— Ignore the photo, it will be updated soon. —
 
 
@@ -1303,7 +1309,7 @@ For the vast majority of users the dosage of Masteron will be kept at a low leve
 
 
 
-Beginners are unlikely to want to go any lower than a 200mg weekly dose of Masteron for physique enhancement so this is considered a good starting point if its your first time using this compound.', 45.00, '/images/products/ME-GSO-scaled.jpg', 100),
+Beginners are unlikely to want to go any lower than a 200mg weekly dose of Masteron for physique enhancement so this is considered a good starting point if its your first time using this compound.', 247.50, '/images/products/ME-GSO-scaled.jpg', 100),
   ('Trenbolone Enanthate 200mg/ml – 10ml Vial', '— Ignore the photo for now, we’ll update it soon. —
 
 
@@ -1352,7 +1358,7 @@ Testosterone is an injectable steroid, so it doesn’t pose any extra strain on 
 
 
 
-We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 45.00, '/images/products/TRE-GSO-scaled.jpg', 100),
+We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 247.50, '/images/products/TRE-GSO-scaled.jpg', 100),
   ('Cutting Stack', 'This product is NOT included in the offer “Spend $100 or more and we’ll add a free vial of Testosterone”!
 
 
@@ -1361,7 +1367,7 @@ You’ll receive:
 
 —————–
 
-x2 – Anavar 25mg capsules x 30 (will be x3 10mg packets of 50 if you’re in the UK)
+x2 – Anavar 25mg capsules x 30 (will be x3 10mg packets of 50 if you''re in Brazil)
 
 x2 – Winstrol 25mg capsules x 50
 
@@ -1403,7 +1409,7 @@ For a 12 week cycle, you can run Anavar for the entire cycle at 40-60mg daily, y
 
 RESULTS:
 
-This stack will help redefine the size you’ve already put on. The healing properties are a bonus, and with increased nitrogen retention you’re going to be maintaining lean mass while shredding off fat.', 135.00, '/images/products/Logo-Original.jpg', 100),
+This stack will help redefine the size you’ve already put on. The healing properties are a bonus, and with increased nitrogen retention you’re going to be maintaining lean mass while shredding off fat.', 742.50, '/images/products/Logo-Original.jpg', 100),
   ('Testosterone Undecanoate (Oral Test) 20mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -1444,7 +1450,7 @@ Dose:
 
 ———-
 
-To get performance enhancement benefits from Testosterone Undecanoate, you would need to use a very high dose of this oral steroid. This is quite an expensive steroid, and additionally there is no scientific information available about the health impacts of consuming such high doses over long periods of time, so it’s always best to only stay on for no longer than 8-12 weeks. Up to 500mg daily would need to be taken of Testosterone Undecanoate due to the low bioavailability of each capsule. The cycle length would need to be similar to a standard steroid cycle at 8 to 12 weeks long.', 25.00, '/images/products/TU-caps.jpg', 100),
+To get performance enhancement benefits from Testosterone Undecanoate, you would need to use a very high dose of this oral steroid. This is quite an expensive steroid, and additionally there is no scientific information available about the health impacts of consuming such high doses over long periods of time, so it’s always best to only stay on for no longer than 8-12 weeks. Up to 500mg daily would need to be taken of Testosterone Undecanoate due to the low bioavailability of each capsule. The cycle length would need to be similar to a standard steroid cycle at 8 to 12 weeks long.', 137.50, '/images/products/TU-caps.jpg', 100),
   ('CJC-1295 (No DAC) – 2mg Vial', 'We’ve partnered with a lab that specializes in Peptides and SARMS. They’ve got some amazing products which I know you guys will love!
 
 If you order both Steroids and SARMS/Peptides, expect two different packages, however at no extra shipping cost.
@@ -1519,7 +1525,7 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration. If present, do not use the solution.
 
-9- Withdraw the desired dose of CJC-1295 using a new syringe.', 30.00, '/images/products/CJC-1295-NO-DAC.jpg', 100),
+9- Withdraw the desired dose of CJC-1295 using a new syringe.', 165.00, '/images/products/CJC-1295-NO-DAC.jpg', 100),
   ('Melanotan 2 – 10mg Vial', 'We’ve partnered with a lab that specializes in Peptides and SARMS. They’ve got some amazing products which I know you guys will love!
 
 If you order both Steroids and SARMS/Peptides, expect two different packages, however at no extra shipping cost.
@@ -1582,7 +1588,7 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration. If present, do not use the solution.
 
-9- Withdraw the desired dose of Melanotan 2 using a new syringe.', 30.00, '/images/products/MT-2-10mg.jpg', 100),
+9- Withdraw the desired dose of Melanotan 2 using a new syringe.', 165.00, '/images/products/MT-2-10mg.jpg', 100),
   ('CJC-1295 (With DAC) – 2mg Vial', 'We’ve partnered with a lab that specializes in Peptides and SARMS. They’ve got some amazing products which I know you guys will love!
 
 If you order both Steroids and SARMS/Peptides, expect two different packages, however at no extra shipping cost.
@@ -1657,8 +1663,8 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration. If present, do not use the solution.
 
-9- Withdraw the desired dose of CJC-1295 using a new syringe.', 40.00, '/images/products/CJC-1295-WITH-DAC.jpg', 100),
-  ('Clomid 50mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+9- Withdraw the desired dose of CJC-1295 using a new syringe.', 220.00, '/images/products/CJC-1295-WITH-DAC.jpg', 100),
+  ('Clomid 50mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -1690,7 +1696,7 @@ Usually, this level of dosage will run for up to two weeks, but it depends on yo
 
 
 
-As Clomid was originally developed as a fertility aid for women, the dosage for this purpose is generally set at 50mg per day, with the occasional increase to 100mg for some women.', 25.00, '/images/products/Clomid-Drops-scaled.jpg', 100),
+As Clomid was originally developed as a fertility aid for women, the dosage for this purpose is generally set at 50mg per day, with the occasional increase to 100mg for some women.', 137.50, '/images/products/Clomid-Drops-scaled.jpg', 100),
   ('Trenbolone Acetate 200mg/ml – 10ml Vial', '— Ignore the photo for now, we’ll update it soon. —
 
 
@@ -1739,7 +1745,7 @@ Testosterone is an injectable steroid, so it doesn’t pose any extra strain on 
 
 
 
-We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 45.00, '/images/products/TRA-GSO-scaled.jpg', 100),
+We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 247.50, '/images/products/TRA-GSO-scaled.jpg', 100),
   ('HGH 12iu Vial', '— Ignore the photo, this vial of HGH contains 12iu —
 
 
@@ -1756,7 +1762,7 @@ HGH cycles usually last anywhere from 6 to 24 weeks, with 16 weeks being the ave
 
 
 
-HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 27.00, '/images/products/zHGH-2-scaled.jpg', 100),
+HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 148.50, '/images/products/zHGH-2-scaled.jpg', 100),
   ('TTM 300mg/ml – 10ml Vial', 'Our TTM 300 contains per ml:
 
 Testosterone Enanthate 100mg/ml
@@ -1767,7 +1773,7 @@ Masteron Enanthate 100mg/ml
 
 
 
-Made using grape seed oil as the carrier oil.', 35.00, '/images/products/TTM-GSO-jpg-Copy-scaled.jpg', 100),
+Made using grape seed oil as the carrier oil.', 192.50, '/images/products/TTM-GSO-jpg-Copy-scaled.jpg', 100),
   ('MCT – Trenbolone Enanthate 200mg/ml – 10ml Vial', '— Ignore the photo for now, we’ll update it soon. —
 
 
@@ -1824,8 +1830,8 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 47.00, '/images/products/Tren-E.jpg', 100),
-  ('Superdrol 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 258.50, '/images/products/Tren-E.jpg', 100),
+  ('Superdrol 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -1887,8 +1893,8 @@ Superdrol dosages should be spaced out throughout the day, as Superdrol is very 
 
 
 
-We find that taking a full day’s dose in one sitting is likely to cause fewer gains and harsher side effects, as testosterone levels will become less stable (with peaks and troughs).', 25.00, '/images/products/Superdrol-drops-scaled.jpg', 100),
-  ('Aromasin 25mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+We find that taking a full day’s dose in one sitting is likely to cause fewer gains and harsher side effects, as testosterone levels will become less stable (with peaks and troughs).', 137.50, '/images/products/Superdrol-drops-scaled.jpg', 100),
+  ('Aromasin 25mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -1902,7 +1908,7 @@ Some studies suggest that it may also help people avoid kidney stones, but furth
 
 
 
-Aromasin users can anticipate to observe a significant decrease in estrogen levels in their bodies. This is due to the aromatase enzyme being inhibited. This is the enzyme in the body that converts testosterone to estrogen.', 25.00, '/images/products/Aromasin-Drops-scaled.jpg', 100),
+Aromasin users can anticipate to observe a significant decrease in estrogen levels in their bodies. This is due to the aromatase enzyme being inhibited. This is the enzyme in the body that converts testosterone to estrogen.', 137.50, '/images/products/Aromasin-Drops-scaled.jpg', 100),
   ('MCT – Trenbolone Acetate 200mg/ml – 10ml Vial', '— Ignore the photo for now, we’ll update it soon. —
 
 
@@ -1959,8 +1965,8 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 47.00, '/images/products/Tren-A.jpg', 100),
-  ('Anadrol 50mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 258.50, '/images/products/Tren-A.jpg', 100),
+  ('Anadrol 50mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -1986,8 +1992,8 @@ Most Anadrol tablets come in 50mg dosages, making it convenient to consume the o
 
 
 
-More is not necessarily better when comes to Anadrol. Studies have shown that you can hit peak gains with a dosage of around 100mg daily, with gains falling after this amount while side effects increase.', 25.00, '/images/products/Anadrol-Drops-scaled.jpg', 100),
-  ('Proviron 25mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+More is not necessarily better when comes to Anadrol. Studies have shown that you can hit peak gains with a dosage of around 100mg daily, with gains falling after this amount while side effects increase.', 137.50, '/images/products/Anadrol-Drops-scaled.jpg', 100),
+  ('Proviron 25mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -2015,7 +2021,7 @@ Doses:
 
 When its used medically as an androgen replacement, Proviron is taken two to three times daily at a 25mg dose each time (50mg-75mg daily).
 
-Taking the exact same or similar dose as is medically prescribed for androgenic treatment is still highly effective for bodybuilders.', 25.00, '/images/products/Proviron-Drops-scaled.jpg', 100),
+Taking the exact same or similar dose as is medically prescribed for androgenic treatment is still highly effective for bodybuilders.', 137.50, '/images/products/Proviron-Drops-scaled.jpg', 100),
   ('Bulking Stack', 'This product is NOT included in the offer “Spend $100 or more and we’ll add a free vial of Testosterone”!
 
 
@@ -2056,7 +2062,7 @@ Weeks 1-12: 300mg/week Deca, 500mg/week test
 
 PCT (Not Included):
 
-Start Arimidex a day after your final injection and continue it for four weeks at 0.5mg daily..', 120.00, '/images/products/Logo-Original.jpg', 100),
+Start Arimidex a day after your final injection and continue it for four weeks at 0.5mg daily..', 660.00, '/images/products/Logo-Original.jpg', 100),
   ('(MCT) TTM 300mg/ml – 10ml Vial', 'Our TTM 300 contains per ml:
 
 Testosterone Enanthate 100mg/ml
@@ -2067,7 +2073,7 @@ Masteron Enanthate 100mg/ml
 
 
 
-Made using MCT oil as the carrier oil.', 37.00, '/images/products/TTM-GSO-jpg-Copy-scaled.jpg', 100),
+Made using MCT oil as the carrier oil.', 203.50, '/images/products/TTM-GSO-jpg-Copy-scaled.jpg', 100),
   ('Cialis 20mg x 25 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -2082,7 +2088,7 @@ Using Cialis pre-workout is the single main use that guys have for this drug, an
 
 
 
-While the purpose of Cialis is not to raise testosterone but instead to promote blood flow and blood vessel dilation, studies have shown that this medication can increase testosterone and improve the testosterone and estradiol (an estrogen hormone) ratio in men with low testosterone disorders and type 2 diabetes.', 25.00, '/images/products/Cialis-caps.jpg', 100),
+While the purpose of Cialis is not to raise testosterone but instead to promote blood flow and blood vessel dilation, studies have shown that this medication can increase testosterone and improve the testosterone and estradiol (an estrogen hormone) ratio in men with low testosterone disorders and type 2 diabetes.', 137.50, '/images/products/Cialis-caps.jpg', 100),
   ('Masteron Enanthate 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -2117,7 +2123,7 @@ For the vast majority of users the dosage of Masteron will be kept at a low leve
 
 
 
-Beginners are unlikely to want to go any lower than a 200mg weekly dose of Masteron for physique enhancement so this is considered a good starting point if its your first time using this compound.', 25.00, '/images/products/ME-GSO-scaled.jpg', 100),
+Beginners are unlikely to want to go any lower than a 200mg weekly dose of Masteron for physique enhancement so this is considered a good starting point if its your first time using this compound.', 137.50, '/images/products/ME-GSO-scaled.jpg', 100),
   ('Nolvadex (Tamoxifen) 25mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -2140,8 +2146,8 @@ The general Nolvadex range is between 10 mg to 50 mg per day. However, Nolvadex 
 
 
 
-The ideal PCT cycle is for three weeks, and the user can consume this dose for 21 days. Note that never take a high dose or perform a long cycle because it may cause various side effects.', 25.00, '/images/products/Nol-caps2.jpg', 100),
-  ('Cialis 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+The ideal PCT cycle is for three weeks, and the user can consume this dose for 21 days. Note that never take a high dose or perform a long cycle because it may cause various side effects.', 137.50, '/images/products/Nol-caps2.jpg', 100),
+  ('Cialis 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -2165,7 +2171,7 @@ Most users will find that no more than 7.5mg is satisfactory for a noticeable pe
 
 
 
-For maximum benefit, most bodybuilders will take Cialis between 30 minutes to an hour before a workout as the drug will start working quickly, and it will start relaxing the blood vessels and give you a noticeable boost to your pumps and cognitive function.', 25.00, '/images/products/Cialis-drops.jpg', 100),
+For maximum benefit, most bodybuilders will take Cialis between 30 minutes to an hour before a workout as the drug will start working quickly, and it will start relaxing the blood vessels and give you a noticeable boost to your pumps and cognitive function.', 137.50, '/images/products/Cialis-drops.jpg', 100),
   ('MCT – Primobolan Enanthate 100mg/ml – 10ml Vial', 'Primobolan (Methenolone) is a unique steroid in several ways including that it’s one of the few you can get in both oral and injectable forms. It is one of the best suited steroids for females, and despite its low anabolic rating it is still a sought after steroid by people who know exactly what they want to use it for, and how to use it for maximum effect.
 
 
@@ -2230,7 +2236,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 42.00, '/images/products/Primo-E-MCT-scaled.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 231.00, '/images/products/Primo-E-MCT-scaled.jpg', 100),
   ('Anavar 10mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -2259,7 +2265,7 @@ Dosage:
 
 ——–
 
-When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 30.00, '/images/products/Avar-caps-10mg.jpg', 100),
+When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 165.00, '/images/products/Avar-caps-10mg.jpg', 100),
   ('MCT – Trenbolone Enanthate 100mg/ml – 10ml Vial', 'Trenbolone is unique in that it doesn’t convert to estrogen, so users do not experience water retention or fat accumulation during a cycle.
 
 
@@ -2312,7 +2318,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 27.00, '/images/products/Tren-E.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 148.50, '/images/products/Tren-E.jpg', 100),
   ('Dianabol 10mg x 100 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -2341,8 +2347,8 @@ Users have reported 30 lbs of weight gain on a dose of 50mg per day over 30 days
 
 
 
-We find that most of this weight will be in the form of muscle mass; however, some temporary water retention will occur, making up roughly 10-15% of the total weight.', 25.00, '/images/products/Dbol-caps.jpg', 100),
-  ('Anavar 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+We find that most of this weight will be in the form of muscle mass; however, some temporary water retention will occur, making up roughly 10-15% of the total weight.', 137.50, '/images/products/Dbol-caps.jpg', 100),
+  ('Anavar 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -2370,7 +2376,7 @@ Dosage:
 
 ——–
 
-When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 30.00, '/images/products/Avar-drops.jpg', 100),
+When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 165.00, '/images/products/Avar-drops.jpg', 100),
   ('MCT – Masteron Enanthate 100mg/ml – 10ml Vial', 'The added Enanthate ester gives this version of Masteron a significantly longer half life of about 10 days.
 
 
@@ -2413,7 +2419,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 27.00, '/images/products/Mast-E.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 148.50, '/images/products/Mast-E.jpg', 100),
   ('Trenbolone Acetate 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -2458,7 +2464,7 @@ Testosterone is an injectable steroid, so it doesn’t pose any extra strain on 
 
 
 
-We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 25.00, '/images/products/TRA-GSO-scaled.jpg', 100),
+We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 137.50, '/images/products/TRA-GSO-scaled.jpg', 100),
   ('Trenbolone Enanthate 100mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -2503,7 +2509,7 @@ Testosterone is an injectable steroid, so it doesn’t pose any extra strain on 
 
 
 
-We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 25.00, '/images/products/TRE-GSO-scaled.jpg', 100),
+We have found testosterone to be one of, if not the best, steroid for the heart, with only mild negative effects on LDL and HDL cholesterol levels.', 137.50, '/images/products/TRE-GSO-scaled.jpg', 100),
   ('MCT – Testosterone Cypionate 250mg/ml – 10ml Vial', 'Made with MCT oil instead of grape seed oil.
 
 
@@ -2578,11 +2584,11 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 22.00, '/images/products/TC.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 121.00, '/images/products/TC.jpg', 100),
   ('Testosterone Enanthate 250mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -2631,7 +2637,7 @@ We have also seen strength increases of 30–50lbs being common on compound lift
 
 
 
-Muscle pumps will also be cosmic, due to large amounts of intracellular fluid filling the muscle cells.', 20.00, '/images/products/TE-GSO-scaled.jpg', 100),
+Muscle pumps will also be cosmic, due to large amounts of intracellular fluid filling the muscle cells.', 110.00, '/images/products/TE-GSO-scaled.jpg', 100),
   ('MCT – Testosterone Enanthate 250mg/ml – 10ml Vial', 'Made with MCT oil instead of grape seed oil.
 
 
@@ -2698,11 +2704,11 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 22.00, '/images/products/TE.jpg', 100),
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 121.00, '/images/products/TE.jpg', 100),
   ('HCG 5,000iu Vial', 'Human Chorionic Gonadotropin or HCG is a powerful polypeptide hormone found in pregnant women.
 
 
@@ -2715,7 +2721,7 @@ For the purpose of on cycle use, standard male HCG doses will normally be 250-35
 
 
 
-For the purpose of PCT, male HCG doses can start as low as 500iu and go as high as 4,000iu. A long standing PCT practice, the individual will administer 1,500-4,000iu every 3-4 days for approximately 2-3 weeks. Once HCG use is completed the use of Selective Estrogen Receptor Modulators (SERM’s) begins.', 25.00, '/images/products/zHCG-2-scaled.jpg', 100),
+For the purpose of PCT, male HCG doses can start as low as 500iu and go as high as 4,000iu. A long standing PCT practice, the individual will administer 1,500-4,000iu every 3-4 days for approximately 2-3 weeks. Once HCG use is completed the use of Selective Estrogen Receptor Modulators (SERM’s) begins.', 137.50, '/images/products/zHCG-2-scaled.jpg', 100),
   ('Test 400 – 400mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -2732,7 +2738,7 @@ Testosterone Cypionate – 150mg/ml
 
 
 
-Testosterone Propionate – 100mg/ml', 30.00, '/images/products/T400-GSO-scaled.jpg', 100),
+Testosterone Propionate – 100mg/ml', 165.00, '/images/products/T400-GSO-scaled.jpg', 100),
   ('Testosterone Cypionate 250mg/ml – 10ml Vial', 'Made using grape seed oil as the carrier oil.
 
 
@@ -2789,7 +2795,7 @@ We have also seen strength increases of 30–50lbs being common on compound lift
 
 
 
-Muscle pumps will also be cosmic, due to large amounts of intracellular fluid filling the muscle cells.', 20.00, '/images/products/TC-GSO-scaled.jpg', 100),
+Muscle pumps will also be cosmic, due to large amounts of intracellular fluid filling the muscle cells.', 110.00, '/images/products/TC-GSO-scaled.jpg', 100),
   ('MCT – Trenbolone Acetate 100mg/ml – 10ml Vial', 'Trenbolone is unique in that it doesn’t convert to estrogen, so users do not experience water retention or fat accumulation during a cycle.
 
 
@@ -2842,7 +2848,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 27.00, '/images/products/Tren-A.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 148.50, '/images/products/Tren-A.jpg', 100),
   ('Anavar 25mg x 30 Capsules – USA', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -2871,7 +2877,7 @@ Dosage:
 
 ——–
 
-When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 32.00, '/images/products/Avar-caps-25mg.jpg', 100),
+When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 176.00, '/images/products/Avar-caps-25mg.jpg', 100),
   ('Semaglutide – 5mg Vial', 'Semaglutide sold under the brand name “Ozempic” is a medication primarily used for the treatment of type 2 diabetes and as an aid in weight management. It mimics a hormone that regulates insulin secretion, helping to control blood sugar levels.
 
 
@@ -2930,8 +2936,8 @@ Bacteriostatic water can be easily purchased online, even Amazon have some avail
 
 8- Inspect the solution for any particles or discoloration. If present, do not use the solution.
 
-9- Withdraw the desired dose of semaglutide using a new syringe.', 50.00, '/images/products/cSemaglutide-scaled.jpg', 100),
-  ('Cialis 20mg/ml x 30ml Liquid Drops (USA)', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
+9- Withdraw the desired dose of semaglutide using a new syringe.', 275.00, '/images/products/cSemaglutide-scaled.jpg', 100),
+  ('Cialis 20mg/ml x 30ml Liquid Drops', '– You will need a syringe (without the needle) for accurate measuring of your dose. The drops may not come in a dropper bottle depending on stock. –
 
 
 
@@ -2955,7 +2961,7 @@ Most users will find that no more than 7.5mg is satisfactory for a noticeable pe
 
 
 
-For maximum benefit, most bodybuilders will take Cialis between 30 minutes to an hour before a workout as the drug will start working quickly, and it will start relaxing the blood vessels and give you a noticeable boost to your pumps and cognitive function.', 25.00, '/images/products/Cialis-drops.jpg', 100),
+For maximum benefit, most bodybuilders will take Cialis between 30 minutes to an hour before a workout as the drug will start working quickly, and it will start relaxing the blood vessels and give you a noticeable boost to your pumps and cognitive function.', 137.50, '/images/products/Cialis-drops.jpg', 100),
   ('Anavar 10mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -2984,7 +2990,7 @@ Dosage:
 
 ——–
 
-When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 30.00, '/images/products/Avar-caps-10mg.jpg', 100),
+When Anavar was first released, a general dose of 5–10 mg per day was common. However, athletes and bodybuilders now typically take 15–25 mg per day. This is usually administered for 6–8 weeks.', 165.00, '/images/products/Avar-caps-10mg.jpg', 100),
   ('Dianabol 10mg x 100 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -3013,7 +3019,7 @@ Users have reported 30 lbs of weight gain on a dose of 50mg per day over 30 days
 
 
 
-We find that most of this weight will be in the form of muscle mass; however, some temporary water retention will occur, making up roughly 10-15% of the total weight.', 25.00, '/images/products/Dbol-caps.jpg', 100),
+We find that most of this weight will be in the form of muscle mass; however, some temporary water retention will occur, making up roughly 10-15% of the total weight.', 137.50, '/images/products/Dbol-caps.jpg', 100),
   ('Nolvadex (Tamoxifen) 25mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -3036,7 +3042,7 @@ The general Nolvadex range is between 10 mg to 50 mg per day. However, Nolvadex 
 
 
 
-The ideal PCT cycle is for three weeks, and the user can consume this dose for 21 days. Note that never take a high dose or perform a long cycle because it may cause various side effects.', 25.00, '/images/products/Nol-caps2.jpg', 100),
+The ideal PCT cycle is for three weeks, and the user can consume this dose for 21 days. Note that never take a high dose or perform a long cycle because it may cause various side effects.', 137.50, '/images/products/Nol-caps2.jpg', 100),
   ('Superdrol 10mg x 50 Capsules', '– The color of the capsules may be “white” depending on stock –
 
 
@@ -3099,7 +3105,7 @@ Superdrol dosages should be spaced out throughout the day, as Superdrol is very 
 
 
 
-We find that taking a full day’s dose in one sitting is likely to cause fewer gains and harsher side effects, as testosterone levels will become less stable (with peaks and troughs).', 25.00, '/images/products/SuperD-caps.jpg', 100),
+We find that taking a full day’s dose in one sitting is likely to cause fewer gains and harsher side effects, as testosterone levels will become less stable (with peaks and troughs).', 137.50, '/images/products/SuperD-caps.jpg', 100),
   ('MCT – Trenbolone Acetate 200mg/ml – 10ml Vial', 'Human Growth Hormone will promote muscle building while also helping your body burn fat, it also has anti-aging properties due to HGH stimulating collagen synthesis.
 
 
@@ -3112,7 +3118,7 @@ HGH cycles usually last anywhere from 6 to 24 weeks, with 16 weeks being the ave
 
 
 
-HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 47.00, '/images/products/HGH-scaled.jpg', 100),
+HGH and testosterone are a common cycle used to significantly enhance muscle building, strength, and fat loss. Thus, this stack could be used for bulking or cutting.', 258.50, '/images/products/HGH-scaled.jpg', 100),
   ('MCT – Primobolan Enanthate 100mg/ml – 10ml Vial', 'Primobolan (Methenolone) is a unique steroid in several ways including that it’s one of the few you can get in both oral and injectable forms. It is one of the best suited steroids for females, and despite its low anabolic rating it is still a sought after steroid by people who know exactly what they want to use it for, and how to use it for maximum effect.
 
 
@@ -3177,7 +3183,7 @@ Some people are allergic to grapeseed oil which is why we’ve made this listing
 
 MCT oil may be a better choice even for someone who doesn’t suffer from grapeseed oil allergies, this is because MCT oil tends to be less viscous (thinner) than grapeseed oil meaning it’s easier to draw into a syringe and inject.
 
-Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 42.00, '/images/products/Primo-E-MCT-scaled.jpg', 100),
+Research also indicates that MCT oil can be used for a quick energy source, and may support weight loss. It may also fight bacterial growth, and aid in managing certain neurological conditions.', 231.00, '/images/products/Primo-E-MCT-scaled.jpg', 100),
   ('MCT – Testosterone Cypionate 250mg/ml – 10ml Vial', 'Made with MCT oil instead of grape seed oil.
 
 
@@ -3252,8 +3258,8 @@ Research also indicates that MCT oil can be used for a quick energy source, and 
 
 Never worry about OPSEC or stealth again!
 
-We provide the best quality stealth on all our products even though we only ship domestically and never through international borders.
+We provide the best quality stealth on all our products, and every parcel leaves Brazil with discreet packaging and tracking.
 
 We delete all personal info such as your shipping address as soon as your order has been sent.
 
-If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 22.00, '/images/products/TC.jpg', 100);
+If you order with tracking we will only keep the tracking number for a maximum of 20 days or until the order has finalized.', 121.00, '/images/products/TC.jpg', 100);

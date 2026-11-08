@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { NO_AUTO_ACTIVE_CLASS } from "@/components/site/link";
-import { useT } from "@/i18n/context";
+import { useLang, useT } from "@/i18n/context";
 import { getPaymentMethods } from "@/data/payments";
+import { formatBRL } from "@/data/store";
 import type { CartLine } from "@/lib/cart";
 
 export type PlacedOrder = {
@@ -11,8 +12,6 @@ export type PlacedOrder = {
   lines: CartLine[];
   pendingItems: string[];
 };
-
-const usd = (value: number) => `$ ${value.toFixed(2)}`;
 
 /**
  * Order receipt + payment rail. The original shop collects crypto through the support
@@ -27,8 +26,10 @@ export function PaymentPanel({
   onCopy?: (address: string) => void;
 }) {
   const t = useT();
+  const { lang } = useLang();
   const methods = getPaymentMethods();
   const configured = methods.filter((method) => method.address.length > 0);
+  const money = (value: number) => formatBRL(value, lang);
 
   return (
     <div className="well" data-testid="payment-panel">
@@ -61,7 +62,7 @@ export function PaymentPanel({
               <b>{t("cart.grandTotal")}</b>
             </td>
             <td>
-              <b>{usd(order.total)}</b>
+              <b>{money(order.total)}</b>
             </td>
           </tr>
         </tbody>
@@ -81,7 +82,7 @@ export function PaymentPanel({
             <tr key={line.product.id}>
               <td>{line.product.name}</td>
               <td>{line.qty}</td>
-              <td>{usd(line.lineTotal)}</td>
+              <td>{money(line.lineTotal)}</td>
             </tr>
           ))}
         </tbody>
